@@ -405,13 +405,6 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
                             key={nominee.id}
                             className={`flex items-start gap-2 p-2 rounded-lg transition-colors ${
                               nominee.is_best_picture_winner 
-                                ? 'bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30' 
-                                : 'bg-gradient-to-r from-neutral-700/50 to-neutral-800/30 hover:from-neutral-600/60 hover:to-neutral-700/40'
-                            }`}
-                          >
-                            <OptimizedImage 
-                              src={formatPosterUrl(nominee.poster_path)}
-                              alt={`${nominee.title} Poster`}
                               className="w-6 h-9 object-cover rounded flex-shrink-0"
                               sizes="24px"
                             />
@@ -561,68 +554,6 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
           )}
 
           {/* Explanation View */}
-          {showExplanation && (
-            <div 
-              className="p-8 md:p-12 md:rounded-2xl md:border md:border-neutral-700"
-              style={{
-                background: '#0a0a0a',
-              }}
-            >
-              <button
-                onClick={() => setShowExplanation(false)}
-                className="mb-6 text-neutral-400 hover:text-white transition-colors flex items-center gap-2 text-sm"
-              >
-                ← Powrót do rezultatu
-              </button>
-
-              <div className="text-center mb-8">
-                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                  🎯 DLACZEGO "{currentMovie?.title?.toUpperCase()}"?
-                </h2>
-              </div>
-
-              <div className="max-w-3xl mx-auto space-y-6">
-                <div className="bg-[#070000] p-6 rounded-lg">
-                  <h3 className="text-[#DFBD69] font-semibold mb-4 text-lg">AI wybrało na podstawie:</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                      <span className="text-neutral-300"><strong>Wysoka jakość</strong> - film oscarowy z potwierdzoną wartością artystyczną</span>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                      <span className="text-neutral-300"><strong>Losowy wybór</strong> - pozwala odkryć nieznane perły kinematografii</span>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                      <span className="text-neutral-300"><strong>Gatunkowa różnorodność</strong> - {currentMovie?.genres?.join(', ') || 'różnorodne gatunki'}</span>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                      <span className="text-neutral-300"><strong>Dostępność</strong> - wszystkie filmy są dostępne do obejrzenia</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-r from-[#DFBD69]/10 to-transparent p-6 rounded-lg border border-[#DFBD69]/20">
-                  <h3 className="text-[#DFBD69] font-semibold mb-3 flex items-center gap-2">
-                    🎬 Oscar Context:
-                  </h3>
-                  <p className="text-neutral-300 leading-relaxed">
-                    "{currentMovie?.title}" {currentMovie?.is_best_picture_winner ? 'wygrał' : 'był nominowany'} w {currentMovie?.oscar_year} roku. 
-                    {currentMovie?.overview && ` ${currentMovie.overview.substring(0, 150)}...`}
-                  </p>
-                </div>
-
-                <div className="text-center pt-4">
-                  <button className="bg-[#DFBD69] text-black font-semibold py-3 px-8 rounded-lg hover:bg-[#E8C573] transition-colors flex items-center justify-center gap-2 mx-auto">
-                    <img src="/dlaczego-ten.png" alt="Smart match" className="w-5 h-5" />
-                    Smart Match dla lepszego dopasowania
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

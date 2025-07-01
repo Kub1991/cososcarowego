@@ -28,13 +28,9 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
   const [recommendations, setRecommendations] = useState<MovieRecommendation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  // NEW: Brief-related state
   const [selectedMovieForBrief, setSelectedMovieForBrief] = useState<MovieRecommendation | null>(null);
   const [briefText, setBriefText] = useState<string>('');
   const [isGeneratingBrief, setIsGeneratingBrief] = useState(false);
-  
-  // NEW: Action feedback state
   const [actionFeedback, setActionFeedback] = useState<{type: 'success' | 'error', message: string} | null>(null);
 
   const moods = [
@@ -954,7 +950,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
             </div>
           )}
 
-          {/* NEW: Brief View - Identical to QuickShotScreen */}
+          {/* Brief View - Identical to QuickShotScreen */}
           {currentStep === 'brief' && selectedMovieForBrief && (
             <div 
               className="p-8 md:p-12 md:rounded-2xl md:border md:border-neutral-700"
@@ -1053,7 +1049,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
   );
 };
 
-// Helper function to parse brief text into sections - IDENTICAL to QuickShotScreen
+// Helper function to parse brief text into sections
 const parseBriefSections = (briefText: string) => {
   if (!briefText) return [];
   
