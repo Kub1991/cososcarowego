@@ -14,12 +14,12 @@ import {
   UserMovieWatch,
   UserStats,
   KinoDNA,
-  UserMovieList,
-  User as SupabaseUser
+  UserMovieList
 } from '../lib/supabase';
+import type { User } from '@supabase/supabase-js';
 
 interface UserDashboardProps {
-  user: SupabaseUser;
+  user: User;
   onBack: () => void;
   onLogout: () => void;
   initialTab?: 'overview' | 'lists' | 'journey' | 'challenges';
