@@ -560,85 +560,79 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ user, onBack, onLogout, i
                         <p className="text-neutral-400 text-xs line-clamp-2">
                           {list.description}
                         </p>
-                      )}
-                    </button>
-                  ))}
-
                   {/* Create new list tile */}
                   <button 
-                    onClick={() => setListViewMode('create')}
-                    className="p-6 rounded-xl border border-neutral-800 border-dashed bg-transparent hover:bg-neutral-900 transition-colors text-left"
-                  >
-                    <Plus className="w-8 h-8 text-neutral-400 mb-4" />
-                    <h3 className="text-white font-semibold mb-2">Nowa lista</h3>
+              {/* Movies Added to Lists */}
+              <div className="space-y-6">
+                {/* Sample movies that user added to lists */}
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="bg-[#1a1c1e] rounded-lg border border-neutral-700 overflow-hidden">
+                    <img 
+                      src="https://image.tmdb.org/t/p/w500/rSPw7tgCH9c6NqICZef4kZjFOQ5.jpg"
+                      alt="The Shawshank Redemption"
+                      className="w-full h-64 object-cover"
+                    />
+                    <div className="p-4">
+                      <h3 className="text-white font-semibold mb-2">The Shawshank Redemption</h3>
+                      <p className="text-neutral-400 text-sm mb-3">1994 • Dramat</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#DFBD69] text-sm">⭐ 9.3/10</span>
+                        <button className="text-neutral-400 hover:text-white transition-colors">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#1a1c1e] rounded-lg border border-neutral-700 overflow-hidden">
+                    <img 
+                      src="https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg"
+                      alt="The Godfather"
+                      className="w-full h-64 object-cover"
+                    />
+                    <div className="p-4">
+                      <h3 className="text-white font-semibold mb-2">The Godfather</h3>
+                      <p className="text-neutral-400 text-sm mb-3">1972 • Dramat</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#DFBD69] text-sm">⭐ 9.2/10</span>
+                        <button className="text-neutral-400 hover:text-white transition-colors">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#1a1c1e] rounded-lg border border-neutral-700 overflow-hidden">
+                    <img 
+                      src="https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg"
+                      alt="The Dark Knight"
+                      className="w-full h-64 object-cover"
+                    />
+                    <div className="p-4">
+                      <h3 className="text-white font-semibold mb-2">The Dark Knight</h3>
+                      <p className="text-neutral-400 text-sm mb-3">2008 • Akcja</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#DFBD69] text-sm">⭐ 9.0/10</span>
+                        <button className="text-neutral-400 hover:text-white transition-colors">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Empty state when no movies */}
+                {false && (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-neutral-800 rounded-full flex items-center justify-center">
+                      <Film className="w-8 h-8 text-neutral-600" />
+                    </div>
+                    <h3 className="text-white font-semibold mb-2">Brak filmów na listach</h3>
                     <p className="text-neutral-400 text-sm">
-                      Stwórz tematyczną playlistę
+                      Dodaj filmy do swoich list używając funkcji "Dodaj do listy" w aplikacji
                     </p>
-                  </button>
-                </div>
-              </>
-            )}
-
-            {listViewMode === 'create' && (
-              <div className="max-w-md mx-auto">
-                <div className="flex items-center gap-4 mb-6">
-                  <button
-                    onClick={() => setListViewMode('overview')}
-                    className="p-2 text-neutral-400 hover:text-white transition-colors"
-                  >
-                    <ArrowLeft className="w-5 h-5" />
-                  </button>
-                  <h2 className="text-2xl font-bold text-white">Nowa lista</h2>
-                </div>
-
-                <div 
-                  className="p-6 rounded-xl border border-neutral-800 space-y-6"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
-                  }}
-                >
-                  <div>
-                    <label className="block text-white font-medium mb-2">
-                      Nazwa listy
-                    </label>
-                    <input
-                      type="text"
-                      value={newListName}
-                      onChange={(e) => setNewListName(e.target.value)}
-                      placeholder="np. Filmy na zimowy wieczór"
-                      className="w-full px-4 py-3 bg-[#070000] border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:border-[#DFBD69] focus:outline-none"
-                    />
                   </div>
-
-                  <div>
-                    <label className="block text-white font-medium mb-2">
-                      Opis (opcjonalny)
-                    </label>
-                    <textarea
-                      value={newListDescription}
-                      onChange={(e) => setNewListDescription(e.target.value)}
-                      placeholder="Krótki opis twojej listy..."
-                      rows={3}
-                      className="w-full px-4 py-3 bg-[#070000] border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:border-[#DFBD69] focus:outline-none resize-none"
-                    />
-                  </div>
-
-                  <div className="flex gap-3">
-                    <button
-                      onClick={createNewList}
-                      disabled={!newListName.trim() || isCreatingList}
-                      className="flex-1 bg-[#DFBD69] text-black font-semibold py-3 px-6 rounded-lg hover:bg-[#E8C573] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isCreatingList ? 'Tworzenie...' : 'Utwórz listę'}
-                    </button>
-                    <button
-                      onClick={() => setListViewMode('overview')}
-                      className="px-6 py-3 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 transition-colors"
-                    >
-                      Anuluj
-                    </button>
-                  </div>
-                </div>
+                )}
               </div>
             )}
 
