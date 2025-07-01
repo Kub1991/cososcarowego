@@ -3,11 +3,35 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+// Enhanced error checking with more detailed messages
+if (!supabaseUrl) {
+  throw new Error('Missing VITE_SUPABASE_URL environment variable. Please check your .env file.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+if (!supabaseAnonKey) {
+  throw new Error('Missing VITE_SUPABASE_ANON_KEY environment variable. Please check your .env file.');
+}
+
+// Validate URL format
+try {
+  new URL(supabaseUrl);
+} catch (error) {
+  throw new Error(`Invalid VITE_SUPABASE_URL format: ${supabaseUrl}. Please ensure it's a valid URL.`);
+}
+
+// Log configuration status (without exposing sensitive data)
+console.log('Supabase Configuration:', {
+  url: supabaseUrl ? `${supabaseUrl.substring(0, 20)}...` : 'Missing',
+  anonKey: supabaseAnonKey ? `${supabaseAnonKey.substring(0, 10)}...` : 'Missing'
+});
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  }
+});
 
 // Types for our database
 export interface Movie {
@@ -528,7 +552,12 @@ export async function calculateKinoDNA(userId: string): Promise<KinoDNA | null> 
       `)
       .eq('user_id', userId);
 
-    if (error || !watchedMovies || watchedMovies.length === 0) {
+    if (error) {
+      console.error('Error fetching watched movies for Kino DNA:', error);
+      return null;
+    }
+
+    if (!watchedMovies || watchedMovies.length === 0) {
       return null;
     }
 
