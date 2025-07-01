@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Film, Trophy, LogOut, Play, BookOpen } from 'lucide-react';
+import { ArrowLeft, User, Film, Trophy, LogOut, Play } from 'lucide-react';
 import { getUserProfile, getUserStats, getUserMovieLists, getMoviesInList, getOrCreateDefaultListId, UserProfile, UserStats, UserMovieList } from '../lib/supabase';
 import { supabase } from '../lib/supabase';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
