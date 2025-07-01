@@ -347,8 +347,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ user, onBack, onLogout, i
               { id: 'overview', label: 'Przegląd', icon: BarChart3 },
               { id: 'lists', label: 'Moje listy', icon: Heart },
               { id: 'journey', label: 'Moja podróż', icon: TrendingUp },
-              { id: 'challenges', label: 'Wyzwania', icon: Trophy },
-              { id: 'analytics', label: 'Analityka', icon: Brain }
+              { id: 'challenges', label: 'Wyzwania', icon: Trophy }
             ].map((tab) => {
               const Icon = tab.icon;
               return (
