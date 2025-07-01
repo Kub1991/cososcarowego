@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User as UserIcon, List, BarChart3, Target, LogOut, Trophy, Calendar, TrendingUp, Star, Clock, Award } from 'lucide-react';
+import { ArrowLeft, User, List, BarChart3, Target, LogOut, Trophy, Calendar, TrendingUp, Star, Clock, Award } from 'lucide-react';
 import { 
   getUserProfile, 
   getUserMovieLists, 
