@@ -82,6 +82,12 @@ function App() {
     }
   };
 
+  const handleLoginSuccess = () => {
+    setDashboardInitialTab('overview');
+    setCurrentView('dashboard');
+    setShowAuthModal(false);
+  };
+
   const handleGoToJourney = () => {
     if (isAuthenticated) {
       setDashboardInitialTab('journey');
@@ -143,6 +149,7 @@ function App() {
           isOpen={showAuthModal}
           onClose={closeAuthModal}
           featureName={authPromptFeature}
+          onLoginSuccess={handleLoginSuccess}
         />
       </Suspense>
     );
@@ -161,6 +168,7 @@ function App() {
           isOpen={showAuthModal}
           onClose={closeAuthModal}
           featureName={authPromptFeature}
+          onLoginSuccess={handleLoginSuccess}
         />
       </Suspense>
     );
@@ -178,6 +186,7 @@ function App() {
           isOpen={showAuthModal}
           onClose={closeAuthModal}
           featureName={authPromptFeature}
+          onLoginSuccess={handleLoginSuccess}
         />
       </Suspense>
     );
@@ -231,6 +240,7 @@ function App() {
         isOpen={showAuthModal}
         onClose={closeAuthModal}
         featureName={authPromptFeature}
+        onLoginSuccess={handleLoginSuccess}
       />
     </div>
   );
