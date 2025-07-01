@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Play, BookOpen, Check, ExternalLink, X } from 'lucide-react';
 import { getRandomOscarMovie, getMovieRecommendation, getOscarNominees, getOrCreateDefaultListId, addMovieToList, markMovieAsWatched, Movie } from '../lib/supabase';
 import { supabase } from '../lib/supabase';
+import OptimizedImage from './OptimizedImage';
 
 interface QuickShotScreenProps {
   onBack: () => void;
@@ -288,10 +289,11 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
                     }}
                   >
                     <div className="flex items-center gap-4">
-                      <img 
+                      <OptimizedImage 
                         src={formatPosterUrl(currentMovie.poster_path)}
                         alt={`${currentMovie.title} Poster`}
                         className="w-12 h-16 object-cover rounded"
+                        priority={true}
                       />
                       <div className="text-left">
                         <h3 className="text-white font-semibold text-sm">{currentMovie.title}</h3>
@@ -325,13 +327,13 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
               <div className="grid lg:grid-cols-5 gap-8 mb-8">
                 {/* Movie Poster */}
                 <div className="lg:col-span-2">
-                  <div className="w-full h-full bg-neutral-800 rounded-lg overflow-hidden">
-                    <img 
-                      src={formatPosterUrl(currentMovie.poster_path)}
-                      alt={`${currentMovie.title} Poster`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  <OptimizedImage 
+                    src={formatPosterUrl(currentMovie.poster_path)}
+                    alt={`${currentMovie.title} Poster`}
+                    className="w-full h-full object-cover rounded-lg"
+                    priority={true}
+                    sizes="(max-width: 1024px) 100vw, 40vw"
+                  />
                 </div>
 
                 {/* Movie Info */}
@@ -407,10 +409,11 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
                                 : 'bg-gradient-to-r from-neutral-700/50 to-neutral-800/30 hover:from-neutral-600/60 hover:to-neutral-700/40'
                             }`}
                           >
-                            <img 
+                            <OptimizedImage 
                               src={formatPosterUrl(nominee.poster_path)}
                               alt={`${nominee.title} Poster`}
                               className="w-6 h-9 object-cover rounded flex-shrink-0"
+                              sizes="24px"
                             />
                             <div className="flex-1 min-w-0">
                               <p className={`text-xs font-medium leading-tight mb-1 ${
@@ -468,9 +471,6 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
                   </button>
                 </div>
               </div>
-
-              {/* Additional Options */}
-              {/* Removed Additional Options section since buttons are now in main area */}
             </div>
             )
           )}

@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import DiscoverySection from './components/DiscoverySection';
 import MoodSection from './components/MoodSection';
 import BucketListSection from './components/BucketListSection';
 import Footer from './components/Footer';
-import QuickShotScreen from './components/QuickShotScreen';
-import SmartMatchScreen from './components/SmartMatchScreen';
-import BrowseByYearsScreen from './components/BrowseByYearsScreen';
 import AuthPromptModal from './components/AuthPromptModal';
-import UserDashboard from './components/UserDashboard';
+import LoadingSkeleton from './components/LoadingSkeleton';
 import { supabase } from './lib/supabase';
 import type { User, Session } from '@supabase/supabase-js';
+
+// Lazy loading komponentów dla code splitting
+const QuickShotScreen = React.lazy(() => import('./components/QuickShotScreen'));
+const SmartMatchScreen = React.lazy(() => import('./components/SmartMatchScreen'));
+const BrowseByYearsScreen = React.lazy(() => import('./components/BrowseByYearsScreen'));
+const UserDashboard = React.lazy(() => import('./components/UserDashboard'));
 
 type ViewType = 'main' | 'quickShot' | 'smartMatch' | 'browseByYears' | 'dashboard';
 type DashboardTab = 'overview' | 'lists' | 'journey' | 'challenges' | 'analytics';
@@ -113,20 +116,23 @@ function App() {
     );
   }
 
+  // Lazy loaded screens z Suspense
   if (currentView === 'dashboard' && isAuthenticated) {
     return (
-      <UserDashboard 
-        user={user!} 
-        onBack={handleBackToMain}
-        onLogout={handleLogout}
-        initialTab={dashboardInitialTab}
-      />
+      <Suspense fallback={<LoadingSkeleton type="dashboard" />}>
+        <UserDashboard 
+          user={user!} 
+          onBack={handleBackToMain}
+          onLogout={handleLogout}
+          initialTab={dashboardInitialTab}
+        />
+      </Suspense>
     );
   }
 
   if (currentView === 'quickShot') {
     return (
-      <>
+      <Suspense fallback={<LoadingSkeleton type="quickshot" />}>
         <QuickShotScreen 
           onBack={handleBackToMain} 
           isAuthenticated={isAuthenticated}
@@ -138,13 +144,13 @@ function App() {
           onClose={closeAuthModal}
           featureName={authPromptFeature}
         />
-      </>
+      </Suspense>
     );
   }
 
   if (currentView === 'smartMatch') {
     return (
-      <>
+      <Suspense fallback={<LoadingSkeleton type="smartmatch" />}>
         <SmartMatchScreen 
           onBack={handleBackToMain}
           isAuthenticated={isAuthenticated}
@@ -156,13 +162,13 @@ function App() {
           onClose={closeAuthModal}
           featureName={authPromptFeature}
         />
-      </>
+      </Suspense>
     );
   }
 
   if (currentView === 'browseByYears') {
     return (
-      <>
+      <Suspense fallback={<LoadingSkeleton type="browse" />}>
         <BrowseByYearsScreen 
           onBack={handleBackToMain}
           isAuthenticated={isAuthenticated}
@@ -173,7 +179,7 @@ function App() {
           onClose={closeAuthModal}
           featureName={authPromptFeature}
         />
-      </>
+      </Suspense>
     );
   }
 
