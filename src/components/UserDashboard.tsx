@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, LogOut, Eye, List, Clock, Star, Trophy, TrendingUp, Film, Bookmark, Award, Calendar, BarChart3, Target, Users, Settings, User as UserIcon } from 'lucide-react';
+import { ArrowLeft, LogOut, Eye, List, Clock, Star, Trophy, TrendingUp, Film, Bookmark, Award, Calendar, BarChart3, Target, Users, Settings, User } from 'lucide-react';
 import { getUserProfile, getUserStats, getUserMovieLists, getMoviesInList, getUserWatchedMovies, getUserDetailedAnalytics, UserProfile, UserStats, MovieList, UserMovieList, UserMovieWatch, GenreAnalysis, DecadeAnalysis } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
