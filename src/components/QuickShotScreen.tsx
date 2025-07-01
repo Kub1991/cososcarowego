@@ -353,7 +353,7 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
                     <div className="flex flex-wrap gap-4 text-sm text-neutral-300 mb-4">
                       <span>⏰ <strong>Czas:</strong> {currentMovie.runtime ? `${Math.floor(currentMovie.runtime / 60)}h ${currentMovie.runtime % 60}min` : 'Nieznany'}</span>
                       <span>🎭 <strong>Gatunek:</strong> {currentMovie.genres?.join(', ') || 'Nieznany'}</span>
-                      <span>⭐ <strong>Ocena:</strong> {currentMovie.vote_average ? `${currentMovie.vote_average}/10` : 'N/A'}</span>
+                      <span>⭐ <strong>Ocena:</strong> {currentMovie.vote_average ? \`${currentMovie.vote_average}/10` : 'N/A'}</span>
                     </div>
 
                     {/* Expectation Section */}
@@ -405,6 +405,13 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
                             key={nominee.id}
                             className={`flex items-start gap-2 p-2 rounded-lg transition-colors ${
                               nominee.is_best_picture_winner 
+                                ? 'bg-[#DFBD69]/10' 
+                                : 'bg-neutral-800/50'
+                            }`}
+                          >
+                            <OptimizedImage 
+                              src={formatPosterUrl(nominee.poster_path)}
+                              alt={`${nominee.title} Poster`}
                               className="w-6 h-9 object-cover rounded flex-shrink-0"
                               sizes="24px"
                             />
@@ -614,4 +621,5 @@ const parseBriefSections = (briefText: string) => {
   
   return sections;
 };
+
 export default QuickShotScreen;
