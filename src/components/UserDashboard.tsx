@@ -100,35 +100,8 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
     <div className="min-h-screen bg-[#070000]">
       {/* Header */}
       <div className="bg-[#1a1c1e] border-b border-neutral-700">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-          {/* Mobile Layout */}
-          <div className="flex flex-col space-y-4 sm:hidden">
-            {/* Top row: Buttons */}
-            <div className="flex items-center justify-between">
-              <button
-                onClick={onBack}
-                className="flex items-center gap-2 px-3 py-2 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 transition-colors text-sm"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span className="font-medium">Powrót</span>
-              </button>
-              <button
-                onClick={onLogout}
-                className="flex items-center gap-2 px-3 py-2 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 transition-colors text-sm"
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="font-medium">Wyloguj</span>
-              </button>
-            </div>
-            {/* Bottom row: Title */}
-            <div className="text-center">
-              <h1 className="text-xl font-bold text-white">Panel użytkownika</h1>
-              <p className="text-neutral-400 text-sm">Witaj, {getUserDisplayName()}!</p>
-            </div>
-          </div>
-
-          {/* Desktop Layout */}
-          <div className="hidden sm:flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={onBack}
@@ -153,35 +126,11 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        <div className="grid lg:grid-cols-4 gap-6 lg:gap-8">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="grid lg:grid-cols-4 gap-8">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-1">
-            {/* Mobile: Horizontal scroll tabs */}
-            <div className="lg:hidden mb-6">
-              <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2">
-                {tabs.map((tab) => {
-                  const IconComponent = tab.icon;
-                  return (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id as DashboardTab)}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                        activeTab === tab.id
-                          ? 'bg-[#DFBD69] text-black'
-                          : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                      }`}
-                    >
-                      <IconComponent className="w-4 h-4" />
-                      <span>{tab.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Desktop: Vertical navigation */}
-            <nav className="hidden lg:block space-y-2">
+            <nav className="space-y-2">
               {tabs.map((tab) => {
                 const IconComponent = tab.icon;
                 return (
@@ -214,72 +163,72 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
             {activeTab === 'overview' && (
               <div className="space-y-8">
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-6">Przegląd konta</h2>
+                  <h2 className="text-2xl font-bold text-white mb-6">Przegląd konta</h2>
                   
                   {/* Stats Grid */}
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+                  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     <div 
-                      className="p-4 sm:p-6 rounded-xl border border-neutral-700"
+                      className="p-6 rounded-xl border border-neutral-700"
                       style={{
                         background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
                       }}
                     >
-                      <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                        <Film className="w-5 h-5 sm:w-6 sm:h-6 text-[#DFBD69]" />
-                        <span className="text-white font-semibold text-sm sm:text-base">Obejrzane</span>
+                      <div className="flex items-center gap-3 mb-2">
+                        <Film className="w-6 h-6 text-[#DFBD69]" />
+                        <span className="text-white font-semibold">Obejrzane</span>
                       </div>
-                      <p className="text-xl sm:text-2xl font-bold text-[#DFBD69]">
+                      <p className="text-2xl font-bold text-[#DFBD69]">
                         {userStats?.watched_movies || 0}
                       </p>
-                      <p className="text-neutral-400 text-xs sm:text-sm">filmów</p>
+                      <p className="text-neutral-400 text-sm">filmów</p>
                     </div>
 
                     <div 
-                      className="p-4 sm:p-6 rounded-xl border border-neutral-700"
+                      className="p-6 rounded-xl border border-neutral-700"
                       style={{
                         background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
                       }}
                     >
-                      <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                        <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-[#DFBD69]" />
-                        <span className="text-white font-semibold text-sm sm:text-base">Do obejrzenia</span>
+                      <div className="flex items-center gap-3 mb-2">
+                        <Heart className="w-6 h-6 text-[#DFBD69]" />
+                        <span className="text-white font-semibold">Do obejrzenia</span>
                       </div>
-                      <p className="text-xl sm:text-2xl font-bold text-[#DFBD69]">
+                      <p className="text-2xl font-bold text-[#DFBD69]">
                         {userStats?.watchlist_movies || 0}
                       </p>
-                      <p className="text-neutral-400 text-xs sm:text-sm">filmów</p>
+                      <p className="text-neutral-400 text-sm">filmów</p>
                     </div>
 
                     <div 
-                      className="p-4 sm:p-6 rounded-xl border border-neutral-700"
+                      className="p-6 rounded-xl border border-neutral-700"
                       style={{
                         background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
                       }}
                     >
-                      <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                        <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-[#DFBD69]" />
-                        <span className="text-white font-semibold text-sm sm:text-base">Poziom</span>
+                      <div className="flex items-center gap-3 mb-2">
+                        <TrendingUp className="w-6 h-6 text-[#DFBD69]" />
+                        <span className="text-white font-semibold">Poziom</span>
                       </div>
-                      <p className="text-xl sm:text-2xl font-bold text-[#DFBD69]">
+                      <p className="text-2xl font-bold text-[#DFBD69]">
                         {userProfile?.level || 1}
                       </p>
-                      <p className="text-neutral-400 text-xs sm:text-sm">poziom</p>
+                      <p className="text-neutral-400 text-sm">poziom</p>
                     </div>
 
                     <div 
-                      className="p-4 sm:p-6 rounded-xl border border-neutral-700"
+                      className="p-6 rounded-xl border border-neutral-700"
                       style={{
                         background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
                       }}
                     >
-                      <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                        <Target className="w-5 h-5 sm:w-6 sm:h-6 text-[#DFBD69]" />
-                        <span className="text-white font-semibold text-sm sm:text-base">Osiągnięcia</span>
+                      <div className="flex items-center gap-3 mb-2">
+                        <Target className="w-6 h-6 text-[#DFBD69]" />
+                        <span className="text-white font-semibold">Osiągnięcia</span>
                       </div>
-                      <p className="text-xl sm:text-2xl font-bold text-[#DFBD69]">
+                      <p className="text-2xl font-bold text-[#DFBD69]">
                         {userStats?.achievements_count || 0}
                       </p>
-                      <p className="text-neutral-400 text-xs sm:text-sm">zdobytych</p>
+                      <p className="text-neutral-400 text-sm">zdobytych</p>
                     </div>
                   </div>
                 </div>
@@ -290,23 +239,23 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
             {activeTab === 'lists' && (
               <div className="space-y-8">
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-6">Moje listy filmów</h2>
+                  <h2 className="text-2xl font-bold text-white mb-6">Moje listy filmów</h2>
                   
                   {watchlistMovies.length === 0 ? (
                     <div 
-                      className="p-6 sm:p-8 rounded-xl border border-neutral-700 text-center"
+                      className="p-8 rounded-xl border border-neutral-700 text-center"
                       style={{
                         background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
                       }}
                     >
-                      <Heart className="w-10 h-10 sm:w-12 sm:h-12 text-[#DFBD69] mx-auto mb-4" />
-                      <h3 className="text-white font-semibold text-base sm:text-lg mb-2">Brak filmów na liście</h3>
-                      <p className="text-neutral-400 text-sm sm:text-base">
+                      <Heart className="w-12 h-12 text-[#DFBD69] mx-auto mb-4" />
+                      <h3 className="text-white font-semibold text-lg mb-2">Brak filmów na liście</h3>
+                      <p className="text-neutral-400">
                         Dodaj filmy do swojej listy używając przycisku "Dodaj do listy" w aplikacji
                       </p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                       {watchlistMovies.map((listMovie) => (
                         <div key={listMovie.id} className="group">
                           <div className="aspect-[2/3] mb-3 rounded-lg overflow-hidden bg-neutral-800">
@@ -316,7 +265,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                           </div>
-                          <h3 className="text-white font-medium text-xs sm:text-sm leading-tight">
+                          <h3 className="text-white font-medium text-sm leading-tight">
                             {listMovie.movie?.title}
                           </h3>
                         </div>
@@ -331,16 +280,16 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
             {activeTab === 'journey' && (
               <div className="space-y-8">
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-6">Moja podróż</h2>
+                  <h2 className="text-2xl font-bold text-white mb-6">Moja podróż</h2>
                   <div 
-                    className="p-6 sm:p-8 rounded-xl border border-neutral-700 text-center"
+                    className="p-8 rounded-xl border border-neutral-700 text-center"
                     style={{
                       background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
                     }}
                   >
-                    <TrendingUp className="w-10 h-10 sm:w-12 sm:h-12 text-[#DFBD69] mx-auto mb-4" />
-                    <h3 className="text-white font-semibold text-base sm:text-lg mb-2">Śledź swoją podróż</h3>
-                    <p className="text-neutral-400 text-sm sm:text-base">
+                    <TrendingUp className="w-12 h-12 text-[#DFBD69] mx-auto mb-4" />
+                    <h3 className="text-white font-semibold text-lg mb-2">Śledź swoją podróż</h3>
+                    <p className="text-neutral-400">
                       Ta sekcja będzie dostępna wkrótce. Tutaj będziesz mógł śledzić swój postęp w odkrywaniu filmów oscarowych.
                     </p>
                   </div>
@@ -352,16 +301,16 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
             {activeTab === 'challenges' && (
               <div className="space-y-8">
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-6">Wyzwania</h2>
+                  <h2 className="text-2xl font-bold text-white mb-6">Wyzwania</h2>
                   <div 
-                    className="p-6 sm:p-8 rounded-xl border border-neutral-700 text-center"
+                    className="p-8 rounded-xl border border-neutral-700 text-center"
                     style={{
                       background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
                     }}
                   >
-                    <Target className="w-10 h-10 sm:w-12 sm:h-12 text-[#DFBD69] mx-auto mb-4" />
-                    <h3 className="text-white font-semibold text-base sm:text-lg mb-2">Podejmij wyzwania</h3>
-                    <p className="text-neutral-400 text-sm sm:text-base">
+                    <Target className="w-12 h-12 text-[#DFBD69] mx-auto mb-4" />
+                    <h3 className="text-white font-semibold text-lg mb-2">Podejmij wyzwania</h3>
+                    <p className="text-neutral-400">
                       Ta sekcja będzie dostępna wkrótce. Tutaj będziesz mógł podejmować różne wyzwania filmowe.
                     </p>
                   </div>
