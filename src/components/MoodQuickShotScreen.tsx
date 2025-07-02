@@ -410,7 +410,7 @@ const MoodQuickShotScreen: React.FC<MoodQuickShotScreenProps> = ({
                       
                       <button 
                         onClick={handleBriefClick}
-                        className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-lg font-semibold transition-all hover:scale-105 transform duration-200 bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] hover:from-[#DFBD69]/30 hover:to-transparent"
+                        className="w-full h-14 sm:h-12 flex items-center justify-center gap-2 px-6 rounded-lg font-semibold transition-all hover:scale-105 transform duration-200 bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] hover:from-[#DFBD69]/30 hover:to-transparent text-xs sm:text-sm"
                       >
                         <BookOpen className="w-5 h-5" />
                         5-min Brief
@@ -471,21 +471,21 @@ const MoodQuickShotScreen: React.FC<MoodQuickShotScreenProps> = ({
                 <div className="lg:col-span-1 space-y-4">
                   <button 
                     onClick={handleAddToList}
-                    className="w-full bg-neutral-700 text-white font-semibold py-4 px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2"
+                    className="w-full h-14 sm:h-12 bg-neutral-700 text-white font-semibold px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
                   >
                     <img src="/ulubione.png" alt="Dodaj do listy" className="w-5 h-5" />
                     Do obejrzenia
                   </button>
                   <button 
                     onClick={handleWatched}
-                    className="w-full bg-neutral-700 text-white font-semibold py-4 px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2"
+                    className="w-full h-14 sm:h-12 bg-neutral-700 text-white font-semibold px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
                   >
                     <Check className="w-5 h-5" />
                     Obejrzałem
                   </button>
                   <button 
                     onClick={handleShuffle}
-                    className="w-full bg-neutral-700 text-white font-semibold py-4 px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2"
+                    className="w-full h-14 sm:h-12 bg-neutral-700 text-white font-semibold px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
                   >
                     <img src="/losowanie.png" alt="Losuj ponownie" className="w-5 h-5" />
                     Losuj ponownie
