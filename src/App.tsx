@@ -211,6 +211,7 @@ function App() {
           onBack={handleBackToMain}
           isAuthenticated={isAuthenticated}
           onAuthPrompt={openAuthModal}
+          onGoToJourney={handleGoToJourney}
         />
         <AuthPromptModal 
           isOpen={showAuthModal}
