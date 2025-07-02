@@ -3,7 +3,6 @@ import { ArrowLeft, LogOut, User as UserIcon, Heart, TrendingUp, Target, Film, C
 import { getUserProfile, getUserStats, getWatchlistMovies, getUserOscarProgress, getUserAchievements, markMovieAsWatched, UserProfile, UserStats, UserWatchlistItem, UserOscarProgress, OscarProgressSummary, UserAchievement } from '../lib/supabase';
 import { supabase } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
-import type { User } from '@supabase/supabase-js';
 
 interface UserDashboardProps {
   user: User;
