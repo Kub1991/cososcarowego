@@ -28,6 +28,16 @@ const MoodQuickShotScreen: React.FC<MoodQuickShotScreenProps> = ({
   const [otherNominees, setOtherNominees] = useState<Movie[]>([]);
   const [actionFeedback, setActionFeedback] = useState<{type: 'success' | 'error', message: string} | null>(null);
 
+  // Chwytliwe nagłówki dla każdego nastroju
+  const moodHeadings: { [key: string]: string } = {
+    'Inspiracja': 'ZAINSPIRUJ SIĘ',
+    'Adrenalina': 'ZASTRZYK ADRENALINY',
+    'Głębokie emocje': 'W GŁĄB EMOCJI',
+    'Humor': 'ODROBINA HUMORU',
+    'Coś ambitnego': 'COŚ AMBITNEGO',
+    'Romantyczny wieczór': 'NIECO ROMANTYZMU'
+  };
+
   const loadingSequence = [
     { step: 'initial', text: `Szukamy filmu w nastroju "${selectedMood}"`, duration: 1000 },
     { step: 'searching', text: 'Analizujemy filmy oscarowe...', duration: 2000 },
@@ -350,7 +360,7 @@ const MoodQuickShotScreen: React.FC<MoodQuickShotScreenProps> = ({
               <div className="text-center mb-8">
                 <div className="text-4xl mb-4">{getMoodEmoji(selectedMood)}</div>
                 <h2 className="text-3xl md:text-4xl font-bold text-[#DFBD69] mb-2">
-                  TWÓJ FILM W NASTROJU "{selectedMood.toUpperCase()}"
+                  {moodHeadings[selectedMood] || selectedMood.toUpperCase()}
                 </h2>
                 <p className="text-neutral-400">
                   Wybrany specjalnie dla Twojego nastroju
@@ -386,7 +396,7 @@ const MoodQuickShotScreen: React.FC<MoodQuickShotScreenProps> = ({
                     <div className="flex flex-wrap gap-4 text-sm text-neutral-300 mb-4">
                       <span>⏰ <strong>Czas:</strong> {currentMovie.runtime ? `${Math.floor(currentMovie.runtime / 60)}h ${currentMovie.runtime % 60}min` : 'Nieznany'}</span>
                       <span>🎭 <strong>Gatunek:</strong> {currentMovie.genres?.join(', ') || 'Nieznany'}</span>
-                      <span>⭐ <strong>Ocena:</strong> {currentMovie.vote_average ?\`${currentMovie.vote_average}/10` : 'N/A'}</span>
+                      <span>⭐ <strong>Ocena:</strong> {currentMovie.vote_average ?`${currentMovie.vote_average}/10` : 'N/A'}</span>
                     </div>
 
                     {/* Mood Match Section */}
