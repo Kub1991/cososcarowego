@@ -110,6 +110,15 @@ export interface OscarProgressSummary {
   overallProgress: number;
 }
 
+// NEW: Progress Details for Modal
+export interface ProgressDetails {
+  categoryType: 'decade' | 'oscar_year';
+  categoryId: string;
+  watchedMovies: Movie[];
+  remainingMovies: Movie[];
+  progressPercentage: number;
+}
+
 // NEW: Enhanced Kino DNA Analysis Types with Weighted Support
 export interface GenreAnalysis {
   genre: string;
@@ -452,6 +461,100 @@ async function getTotalOscarMovies(): Promise<number> {
   } catch (error) {
     console.error('Error in getTotalOscarMovies:', error);
     return 0;
+  }
+}
+
+// NEW: Get detailed progress for a specific category
+export async function getProgressDetails(userId: string, categoryType: 'decade' | 'oscar_year', categoryId: string): Promise<ProgressDetails | null> {
+  try {
+    // Get all movies for this category
+    let query = supabase
+      .from('movies')
+      .select('*')
+      .eq('is_best_picture_nominee', true);
+
+    if (categoryType === 'decade') {
+      // Filter by decade
+      if (categoryId === '2000s') {
+        query = query.gte('oscar_year', 2001).lte('oscar_year', 2010);
+      } else if (categoryId === '2010s') {
+        query = query.gte('oscar_year', 2011).lte('oscar_year', 2020);
+      }
+    } else {
+      // Filter by specific Oscar year
+      query = query.eq('oscar_year', parseInt(categoryId));
+    }
+
+    const { data: allMovies, error: moviesError } = await query.order('year', { ascending: true });
+
+    if (moviesError || !allMovies) {
+      console.error('Error fetching movies for progress details:', moviesError);
+      return null;
+    }
+
+    // Get user's watched movies for this category
+    const { data: watchedData, error: watchedError } = await supabase
+      .from('user_movie_watches')
+      .select('movie_id')
+      .eq('user_id', userId);
+
+    if (watchedError) {
+      console.error('Error fetching watched movies:', watchedError);
+      return null;
+    }
+
+    const watchedMovieIds = new Set(watchedData?.map(w => w.movie_id) || []);
+
+    // Separate watched and remaining movies
+    const watchedMovies = allMovies.filter(movie => watchedMovieIds.has(movie.id));
+    const remainingMovies = allMovies.filter(movie => !watchedMovieIds.has(movie.id));
+
+    const progressPercentage = allMovies.length > 0 
+      ? Math.round((watchedMovies.length / allMovies.length) * 100) 
+      : 0;
+
+    return {
+      categoryType,
+      categoryId,
+      watchedMovies,
+      remainingMovies,
+      progressPercentage
+    };
+
+  } catch (error) {
+    console.error('Error in getProgressDetails:', error);
+    return null;
+  }
+}
+
+// NEW: Get AI recommendation for remaining movies in a category
+export async function getProgressRecommendation(userId: string, categoryType: 'decade' | 'oscar_year', categoryId: string, remainingMovies: Movie[]): Promise<string> {
+  try {
+    const response = await fetch(`${supabaseUrl}/functions/v1/movie-recommendations`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${supabaseAnonKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        type: 'progress-recommendation',
+        userId,
+        categoryType,
+        categoryId,
+        remainingMovies: remainingMovies.slice(0, 10) // Limit to 10 movies for AI analysis
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch progress recommendation');
+    }
+
+    const result = await response.json();
+    return result.recommendation || 'Kontynuuj oglądanie filmów z tej kategorii, aby ukończyć swój postęp!';
+
+  } catch (error) {
+    console.error('Error fetching progress recommendation:', error);
+    return 'Kontynuuj oglądanie filmów z tej kategorii, aby ukończyć swój postęp!';
   }
 }
 
@@ -1200,7 +1303,6 @@ export async function getSelectionStats(): Promise<{
 
     const oldestSelection = selectedMovies.length > 0 
       ? new Date(Math.min(...selectedMovies.map(d => d.getTime()))).toISOString()
-
       : null;
     
     const newestSelection = selectedMovies.length > 0
@@ -1242,7 +1344,6 @@ export async function getAvailableOscarYears(): Promise<number[]> {
     return uniqueYears.sort((a, b) => a - b);
   } catch (error) {
     console.error('Error in getAvailableOscarYears:', error);
-
     return [];
   }
 }
