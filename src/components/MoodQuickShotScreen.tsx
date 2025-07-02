@@ -389,7 +389,7 @@ const MoodQuickShotScreen: React.FC<MoodQuickShotScreenProps> = ({
                     <div className="flex flex-wrap gap-4 text-sm text-neutral-300 mb-4">
                       <span>⏰ <strong>Czas:</strong> {currentMovie.runtime ? `${Math.floor(currentMovie.runtime / 60)}h ${currentMovie.runtime % 60}min` : 'Nieznany'}</span>
                       <span>🎭 <strong>Gatunek:</strong> {formatThematicTags(currentMovie.thematic_tags)}</span>
-                      <span>⭐ <strong>Ocena:</strong> {currentMovie.vote_average ?`${currentMovie.vote_average}/10` : 'N/A'}</span>
+                      <span>⭐ <strong>Ocena:</strong> {currentMovie.vote_average ?\`${currentMovie.vote_average}/10` : 'N/A'}</span>
                     </div>
 
                     {/* Mood Match Section */}
