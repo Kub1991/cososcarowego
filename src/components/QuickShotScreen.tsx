@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Play, BookOpen, Check, ExternalLink, X } from 'lucide-react';
+import { ArrowLeft, Play, BookOpen, Check, ExternalLink, X, TrendingUp } from 'lucide-react';
 import { getRandomOscarMovie, getMovieRecommendation, getOscarNominees, addMovieToWatchlist, markMovieAsWatched, Movie } from '../lib/supabase';
 import { supabase } from '../lib/supabase';
 import OptimizedImage from './OptimizedImage';
@@ -388,15 +388,25 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
                     <div className="mb-4">
                       <h3 className="text-white font-semibold mb-3">📺 Gdzie obejrzeć:</h3>
                       <p className="text-neutral-400 text-sm mb-4">Funkcja dostępna wkrótce</p>
-                      
-                      {/* 5-Minute Brief Button - Full width on mobile, golden gradient */}
-                      <button 
-                        onClick={handleBriefClick}
-                        className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-lg font-semibold transition-all hover:scale-105 transform duration-200 bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] hover:from-[#DFBD69]/30 hover:to-transparent"
-                      >
-                        <BookOpen className="w-5 h-5" />
-                        5-min Brief
-                      </button>
+
+                      {/* Brief and Journey Buttons */}
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <button 
+                          onClick={handleBriefClick}
+                          className="h-12 bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] font-semibold px-4 rounded-lg hover:from-[#DFBD69]/30 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
+                        >
+                          <BookOpen className="w-5 h-5" />
+                          5-min Brief
+                        </button>
+                        
+                        <button 
+                          onClick={onGoToJourney}
+                          className="h-12 bg-neutral-700 text-white font-semibold px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
+                        >
+                          <TrendingUp className="w-5 h-5" />
+                          Moja droga
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -452,21 +462,21 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
                 <div className="lg:col-span-1 space-y-4">
                   <button 
                     onClick={handleAddToList}
-                    className="w-full bg-neutral-700 text-white font-semibold py-4 px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2"
+                    className="w-full h-12 bg-neutral-700 text-white font-semibold px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
                   >
                     <img src="/ulubione.png" alt="Dodaj do listy" className="w-5 h-5" />
                     Do obejrzenia
                   </button>
                   <button 
                     onClick={handleWatched}
-                    className="w-full bg-neutral-700 text-white font-semibold py-4 px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2"
+                    className="w-full h-12 bg-neutral-700 text-white font-semibold px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
                   >
                     <Check className="w-5 h-5" />
                     Obejrzałem
                   </button>
                   <button 
                     onClick={handleShuffle}
-                    className="w-full bg-neutral-700 text-white font-semibold py-4 px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2"
+                    className="w-full h-12 bg-neutral-700 text-white font-semibold px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
                   >
                     <img src="/losowanie.png" alt="Losuj ponownie" className="w-5 h-5" />
                     Losuj ponownie
