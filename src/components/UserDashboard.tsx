@@ -447,7 +447,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                         }}
                       >
                         <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-white font-semibold text-lg">Ogólny postęp</h3>
+                          <h3 className="text-white font-semibold text-lg">Oscarowa Bucket Lista</h3>
                           <span className="text-[#DFBD69] font-bold text-2xl">
                             {oscarProgress.overallProgress}%
                           </span>
