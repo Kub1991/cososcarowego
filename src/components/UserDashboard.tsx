@@ -152,22 +152,35 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
         <div className="max-w-6xl mx-auto px-6 py-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <button
-                onClick={onBack}
-                className="flex items-center gap-2 px-4 py-2 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                <span className="text-sm font-medium">Powrót</span>
-              </button>
-              
-              {/* Mobile logout button - shown below back button */}
-              <button
-                onClick={onLogout}
-                className="flex md:hidden items-center gap-2 px-4 py-2 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 transition-colors"
-              >
-                <LogOut className="w-5 h-5" />
-                <span className="text-sm font-medium">Wyloguj</span>
-              </button>
+              <div className="flex items-center gap-2">
+                {/* Mobile: Icon-only buttons */}
+                <button
+                  onClick={onBack}
+                  className="flex md:hidden items-center justify-center w-10 h-10 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 transition-colors"
+                  title="Powrót"
+                  aria-label="Powrót"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                
+                <button
+                  onClick={onLogout}
+                  className="flex md:hidden items-center justify-center w-10 h-10 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 transition-colors"
+                  title="Wyloguj"
+                  aria-label="Wyloguj"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+                
+                {/* Desktop: Full buttons with text */}
+                <button
+                  onClick={onBack}
+                  className="hidden md:flex items-center gap-2 px-4 py-2 bg-neutral-700 text-white rounded-lg hover:bg-neutral-600 transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                  <span className="text-sm font-medium">Powrót</span>
+                </button>
+              </div>
               
               <div>
                 <h1 className="text-2xl font-bold text-white">Panel użytkownika</h1>
