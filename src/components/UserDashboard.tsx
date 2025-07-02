@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, LogOut, User, Heart, TrendingUp, Target, Film } from 'lucide-react';
+import { ArrowLeft, LogOut, User as UserIcon, Heart, TrendingUp, Target, Film } from 'lucide-react';
 import { getUserProfile, getUserStats, getUserMovieLists, getMoviesInList, UserProfile, UserStats, UserMovieList } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
@@ -79,7 +79,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   };
 
   const tabs = [
-    { id: 'overview', label: 'Przegląd', icon: User },
+    { id: 'overview', label: 'Przegląd', icon: UserIcon },
     { id: 'lists', label: 'Moje listy filmów', icon: Heart },
     { id: 'journey', label: 'Moja podróż', icon: TrendingUp },
     { id: 'challenges', label: 'Wyzwania', icon: Target }
