@@ -88,48 +88,33 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
       console.error('Error marking movie as watched:', error);
       console.error('❌ Dashboard: Exception in handleMarkAsWatched:', error);
       setActionFeedback({ type: 'error', message: 'Wystąpił błąd podczas oznaczania filmu' });
-}
-
-const MoodSection: React.FC<MoodSectionProps> = ({ onMoodClick }) => {
+    }
   };
 
-      id: 'Inspiracja',
   const formatPosterUrl = (posterPath: string | null | undefined) => {
     if (!posterPath) return '/jpiDCxkCbo0.movieposter_maxres.jpg';
     return `https://image.tmdb.org/t/p/w500${posterPath}`;
   };
-      id: 'Adrenalina',
 
   const getUserDisplayName = () => {
     if (userProfile?.display_name) {
       return userProfile.display_name;
-      id: 'Głębokie emocje',
     }
     if (user?.user_metadata?.full_name) {
       return user.user_metadata.full_name;
     }
-      id: 'Humor',
     if (user?.email) {
       return user.email.split('@')[0];
     }
     return 'Użytkownik';
-      id: 'Coś ambitnego',
   };
 
   const tabs = [
     { id: 'overview', label: 'Przegląd', icon: UserIcon },
-      id: 'Romantyczny wieczór',
     { id: 'watchlist', label: 'Lista filmów', icon: Heart },
     { id: 'journey', label: 'Moja podróż', icon: TrendingUp },
     { id: 'challenges', label: 'Wyzwania', icon: Target }
   ];
-
-  const handleMoodClick = (moodId: string) => {
-    if (onMoodClick) {
-      console.log(`🎭 MoodSection: User clicked mood "${moodId}"`);
-      onMoodClick(moodId);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -159,7 +144,6 @@ const MoodSection: React.FC<MoodSectionProps> = ({ onMoodClick }) => {
             )}
             <span className="text-sm font-medium">{actionFeedback.message}</span>
           </div>
-              onClick={() => handleMoodClick(mood.id)}
         </div>
       )}
 
