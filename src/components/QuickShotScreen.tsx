@@ -221,15 +221,6 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
     }
   };
 
-  const handleMyJourney = () => {
-    console.log('🔄 QuickShot: Shuffling to get new movie...');
-    if (isAuthenticated) {
-      onGoToJourney();
-    } else {
-      onAuthPrompt('śledzenia swojej Oscarowej podróży');
-    }
-  };
-
   const formatPosterUrl = (posterPath: string | null | undefined) => {
     if (!posterPath) return '/jpiDCxkCbo0.movieposter_maxres.jpg'; // fallback
     return `https://image.tmdb.org/t/p/w500${posterPath}`;
@@ -478,20 +469,6 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
                   >
                     <img src="/losowanie.png" alt="Losuj ponownie" className="w-5 h-5" />
                     Losuj ponownie
-                  </button>
-                  <button 
-                    onClick={() => setShowExplanation(true)}
-                    className="w-full bg-neutral-700 text-white font-semibold py-4 px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2"
-                  >
-                    <img src="/dlaczego-ten.png" alt="Dlaczego ten" className="w-5 h-5" />
-                    Dlaczego ten
-                  </button>
-                  <button 
-                    onClick={handleMyJourney}
-                    className="w-full bg-neutral-700 text-white font-semibold py-4 px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2"
-                  >
-                    <img src="/moja-podroz.png" alt="Moja podróż" className="w-5 h-5" />
-                    Moja podróż
                   </button>
                 </div>
               </div>

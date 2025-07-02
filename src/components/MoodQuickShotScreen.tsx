@@ -219,14 +219,6 @@ const MoodQuickShotScreen: React.FC<MoodQuickShotScreenProps> = ({
     }
   };
 
-  const handleMyJourney = () => {
-    if (isAuthenticated) {
-      onGoToJourney();
-    } else {
-      onAuthPrompt('śledzenia swojej Oscarowej podróży');
-    }
-  };
-
   const formatPosterUrl = (posterPath: string | null | undefined) => {
     if (!posterPath) return '/jpiDCxkCbo0.movieposter_maxres.jpg';
     return `https://image.tmdb.org/t/p/w500${posterPath}`;
@@ -496,13 +488,6 @@ const MoodQuickShotScreen: React.FC<MoodQuickShotScreenProps> = ({
                   >
                     <img src="/losowanie.png" alt="Losuj ponownie" className="w-5 h-5" />
                     Losuj ponownie
-                  </button>
-                  <button 
-                    onClick={handleMyJourney}
-                    className="w-full bg-neutral-700 text-white font-semibold py-4 px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2"
-                  >
-                    <img src="/moja-podroz.png" alt="Moja podróż" className="w-5 h-5" />
-                    Moja podróż
                   </button>
                 </div>
               </div>

@@ -288,7 +288,7 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
       {/* Action Feedback */}
       {actionFeedback && (
         <div className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 ${
-          actionFeedback.type === 'success' 
+          actionFeedback.type ===  'success' 
             ? 'bg-green-600 text-white' 
             : 'bg-red-600 text-white'
         }`}>
