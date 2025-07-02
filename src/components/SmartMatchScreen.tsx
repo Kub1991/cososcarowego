@@ -913,27 +913,24 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
           {/* Brief View - Identical to QuickShotScreen */}
           {currentStep === 'brief' && selectedMovieForBrief && (
             <div 
-              className="p-8 md:p-12 md:rounded-2xl md:border md:border-neutral-700"
-              style={{
-                background: '#0a0a0a',
-              }}
+              className="p-0 md:p-12 md:rounded-2xl md:border md:border-neutral-700 md:bg-[#0a0a0a]"
             >
               <div className="flex items-center justify-between mb-8">
                 <button
                   onClick={() => setCurrentStep('results')}
-                  className="text-neutral-400 hover:text-white transition-colors flex items-center gap-2 text-sm"
+                  className="text-neutral-400 hover:text-white transition-colors flex items-center gap-2 text-sm px-6 md:px-0"
                 >
                   ← Powrót do rezultatów
                 </button>
                 <button
                   onClick={() => setCurrentStep('results')}
-                  className="p-2 text-neutral-400 hover:text-white transition-colors"
+                  className="p-2 text-neutral-400 hover:text-white transition-colors mr-6 md:mr-0"
                 >
                   <X className="w-6 h-6" />
                 </button>
               </div>
 
-              <div className="text-center mb-8">
+              <div className="text-center mb-8 px-6 md:px-0">
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
                   📖 5-MINUTOWY BRIEF: "{selectedMovieForBrief.movie.title?.toUpperCase()}"
                 </h2>
@@ -941,14 +938,14 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
               </div>
 
               {isGeneratingBrief ? (
-                <div className="flex items-center justify-center py-12">
+                <div className="flex items-center justify-center py-12 px-6 md:px-0">
                   <div className="text-center space-y-4">
                     <div className="w-8 h-8 mx-auto border-2 border-[#DFBD69] rounded-full animate-spin border-t-transparent"></div>
                     <p className="text-neutral-400">Przygotowujemy Twój brief...</p>
                   </div>
                 </div>
               ) : (
-                <div className="max-w-4xl mx-auto">
+                <div className="max-w-4xl mx-auto px-6 md:px-0">
                   {briefText ? (
                     <div className="space-y-6">
                       {parseBriefSections(briefText).map((section, index) => (
@@ -990,7 +987,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
                     </div>
                   )}
 
-                  <div className="text-center mt-8">
+                  <div className="text-center mt-8 px-6 md:px-0">
                     <button 
                       onClick={() => setCurrentStep('results')}
                       className="bg-[#DFBD69] text-black font-semibold py-3 px-8 rounded-lg hover:bg-[#E8C573] transition-colors flex items-center justify-center gap-2 mx-auto"
