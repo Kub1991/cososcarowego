@@ -349,7 +349,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                           
                           {/* Movie title with mobile checkmark button */}
                           <div className="flex items-start justify-between gap-2">
-                            <h3 className="text-white font-medium text-sm leading-tight flex-1">
+                            <h3 className="md:hidden text-white font-medium text-sm leading-tight flex-1">
                               {listMovie.movies?.title}
                             </h3>
                             
