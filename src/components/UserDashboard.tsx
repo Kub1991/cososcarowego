@@ -499,7 +499,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                       {/* Recent Years Progress */}
                       {oscarProgress.years.length > 0 && (
                         <div>
-                          <h3 className="text-white font-semibold text-lg mb-4">Ostatnie lata Oscarów</h3>
+                          <h3 className="text-white font-semibold text-lg mb-4">Postęp według lat</h3>
                           <div className="grid md:grid-cols-2 gap-4">
                             {oscarProgress.years.map((year) => (
                               <div 
