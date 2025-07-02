@@ -51,29 +51,18 @@ export interface UserProfile {
   longest_streak: number;
   favorite_genres?: string[];
   favorite_decades?: string[];
+  bio?: string;
+  is_public?: boolean;
   created_at: string;
   updated_at: string;
 }
 
-export interface MovieList {
+// NEW: User Watchlist Item Type
+export interface UserWatchlistItem {
   id: string;
   user_id: string;
-  name: string;
-  description?: string;
-  is_default: boolean;
-  is_public: boolean;
-  movie_count: number;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface UserMovieList {
-  id: string;
-  list_id: string;
   movie_id: string;
   added_at: string;
-  notes?: string;
-  priority?: number;
   movie?: Movie;
 }
 
@@ -313,9 +302,6 @@ export async function createUserProfile(userId: string, displayName: string): Pr
       return null;
     }
 
-    // Create default lists for the user
-    await createDefaultUserLists(userId);
-
     return data;
   } catch (error) {
     console.error('Error in createUserProfile:', error);
@@ -343,169 +329,61 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
   }
 }
 
-// User Lists Functions
-export async function createDefaultUserLists(userId: string): Promise<void> {
+// NEW: User Watchlist Functions
+export async function addMovieToWatchlist(userId: string, movieId: string): Promise<boolean> {
   try {
-    const defaultLists = [
-      {
-        user_id: userId,
-        name: 'Do obejrzenia',
-        description: 'Filmy, które chcę obejrzeć',
-        is_default: true,
-        is_public: false
-      },
-      {
-        user_id: userId,
-        name: 'Obejrzane',
-        description: 'Filmy, które już obejrzałem',
-        is_default: true,
-        is_public: false
-      }
-    ];
-
-    const { error } = await supabase
-      .from('user_movie_lists')
-      .insert(defaultLists);
-
-    if (error) {
-      console.error('Error creating default lists:', error);
-    }
-  } catch (error) {
-    console.error('Error in createDefaultUserLists:', error);
-  }
-}
-
-export async function getUserMovieLists(userId: string): Promise<MovieList[]> {
-  try {
-    const { data, error } = await supabase
-      .from('user_movie_lists')
-      .select(`
-        *,
-        user_list_movies (count)
-      `)
-      .eq('user_id', userId)
-      .order('created_at', { ascending: true });
-
-    if (error) {
-      console.error('Error fetching user movie lists:', error);
-      return [];
-    }
-
-    return data.map(list => ({
-      ...list,
-      movie_count: list.user_list_movies?.[0]?.count || 0
-    }));
-  } catch (error) {
-    console.error('Error in getUserMovieLists:', error);
-    return [];
-  }
-}
-
-// NEW: Get movies in a specific list
-export async function getMoviesInList(listId: string): Promise<UserMovieList[]> {
-  try {
-    const { data, error } = await supabase
-      .from('user_list_movies')
-      .select(`
-        *,
-        movies (*)
-      `)
-      .eq('list_id', listId)
-      .order('added_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching movies in list:', error);
-      return [];
-    }
-
-    return data || [];
-  } catch (error) {
-    console.error('Error in getMoviesInList:', error);
-    return [];
-  }
-}
-
-// NEW: Get or create default list ID function
-export async function getOrCreateDefaultListId(userId: string, listName: string): Promise<string | null> {
-  try {
-    // First, try to find existing default list
-    const { data: existingList, error: findError } = await supabase
-      .from('user_movie_lists')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('name', listName)
-      .eq('is_default', true)
-      .maybeSingle();
-
-    if (findError) {
-      console.error('Error finding default list:', findError);
-      return null;
-    }
-
-    // If list exists, return its ID
-    if (existingList) {
-      return existingList.id;
-    }
-
-    // If list doesn't exist, create it
-    const { data: newList, error: createError } = await supabase
-      .from('user_movie_lists')
-      .insert({
-        user_id: userId,
-        name: listName,
-        description: listName === 'Do obejrzenia' 
-          ? 'Filmy, które chcę obejrzeć' 
-          : 'Filmy, które już obejrzałem',
-        is_default: true,
-        is_public: false
-      })
-      .select('id')
-      .single();
-
-    if (createError) {
-      console.error('Error creating default list:', createError);
-      return null;
-    }
-
-    return newList.id;
-  } catch (error) {
-    console.error('Error in getOrCreateDefaultListId:', error);
-    return null;
-  }
-}
-
-export async function addMovieToList(listId: string, movieId: string, notes?: string): Promise<boolean> {
-  try {
-    // Check if movie is already in the list
+    // Check if movie is already in the watchlist
     const { data: existing } = await supabase
-      .from('user_list_movies')
+      .from('user_watchlist')
       .select('id')
-      .eq('list_id', listId)
+      .eq('user_id', userId)
       .eq('movie_id', movieId)
       .maybeSingle();
 
     if (existing) {
-      // Movie already in list
-      return true;
+      console.log('📝 Supabase: Movie already in watchlist.');
+      return true; // Movie already exists, consider it a success
     }
 
     const { error } = await supabase
-      .from('user_list_movies')
+      .from('user_watchlist')
       .insert({
-        list_id: listId,
+        user_id: userId,
         movie_id: movieId,
-        notes
       });
 
     if (error) {
-      console.error('Error adding movie to list:', error);
+      console.error('Error adding movie to watchlist:', error);
       return false;
     }
 
     return true;
   } catch (error) {
-    console.error('Error in addMovieToList:', error);
+    console.error('Error in addMovieToWatchlist:', error);
     return false;
+  }
+}
+
+export async function getWatchlistMovies(userId: string): Promise<UserWatchlistItem[]> {
+  try {
+    const { data, error } = await supabase
+      .from('user_watchlist')
+      .select(`
+        *,
+        movies (*)
+      `)
+      .eq('user_id', userId)
+      .order('added_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching watchlist movies:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error in getWatchlistMovies:', error);
+    return [];
   }
 }
 
@@ -763,10 +641,9 @@ export async function getUserStats(userId: string): Promise<UserStats | null> {
         .select('*', { count: 'exact' })
         .eq('user_id', userId),
       supabase
-        .from('user_list_movies')
-        .select('list_id, user_movie_lists!inner(user_id, name)', { count: 'exact' })
-        .eq('user_movie_lists.user_id', userId)
-        .eq('user_movie_lists.name', 'Do obejrzenia'),
+        .from('user_watchlist') // UPDATED: Count from new user_watchlist table
+        .select('*', { count: 'exact' })
+        .eq('user_id', userId),
       supabase
         .from('user_movie_watches')
         .select(`
