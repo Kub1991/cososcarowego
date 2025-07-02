@@ -115,7 +115,6 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
     { id: 'journey', label: 'Moja podróż', icon: TrendingUp },
     { id: 'challenges', label: 'Wyzwania', icon: Target }
   ];
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#070000] flex items-center justify-center">
@@ -193,21 +192,24 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                 disabled={!onQuickShot}
                 className="flex-shrink-0 px-3 md:px-4 py-2 text-black font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap bg-[#DFBD69] hover:bg-[#E8C573]"
               >
-                Szybki strzał
+                <span className="hidden sm:inline">Szybki strzał</span>
+                <span className="sm:hidden">Szybki</span>
               </button>
               <button
                 onClick={onSmartMatch}
                 disabled={!onSmartMatch}
                 className="flex-shrink-0 px-3 md:px-4 py-2 text-black font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap bg-[#DFBD69] hover:bg-[#E8C573]"
               >
-                Dopasowany wybór
+                <span className="hidden sm:inline">Dopasowany wybór</span>
+                <span className="sm:hidden">Dopasowany</span>
               </button>
               <button
                 onClick={onBrowseByYears}
                 disabled={!onBrowseByYears}
                 className="flex-shrink-0 px-3 md:px-4 py-2 text-black font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap bg-[#DFBD69] hover:bg-[#E8C573]"
               >
-                Przeszukaj latami
+                <span className="hidden sm:inline">Przeszukaj latami</span>
+                <span className="sm:hidden">Lata</span>
               </button>
             </div>
           </div>
@@ -323,9 +325,6 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
-
             {/* Movie Lists Tab */}
             {activeTab === 'watchlist' && (
               <div className="space-y-8">
@@ -385,6 +384,18 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                             <h3 className="md:hidden text-white font-medium text-sm leading-tight flex-1">
                               {listMovie.movies?.title}
                             </h3>
+                            
+                            {/* Alternative mobile button next to title (commented out - using corner button instead) */}
+                            {/* 
+                            <button
+                              onClick={() => handleMarkAsWatched(listMovie.movie_id, listMovie.movies?.title || 'Film')}
+                              className="md:hidden bg-green-600 hover:bg-green-700 text-white p-1 rounded-full transition-colors duration-200 shadow-lg flex-shrink-0"
+                              title="Oznacz jako obejrzany"
+                              aria-label="Oznacz jako obejrzany"
+                            >
+                              <Check className="w-4 h-4" />
+                            </button>
+                            */}
                           </div>
                           
                           {/* Keep original title for desktop (hidden on mobile) */}
