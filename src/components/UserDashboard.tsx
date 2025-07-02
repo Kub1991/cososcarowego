@@ -130,7 +130,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
 
   const tabs = [
     { id: 'overview', label: 'Przegląd', icon: UserIcon },
-    { id: 'watchlist', label: 'Lista filmów', icon: Heart },
+    { id: 'watchlist', label: 'Do obejrzenia', icon: Heart },
     { id: 'journey', label: 'Moja podróż', icon: TrendingUp },
     { id: 'challenges', label: 'Wyzwania', icon: Target }
   ];
