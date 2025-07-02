@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, ChevronLeft, ChevronRight, Play, BookOpen, Trophy, Check, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Play, BookOpen, Trophy, Check, ChevronDown, ChevronUp, X, TrendingUp } from 'lucide-react';
 import { 
   getAvailableOscarYears, 
   getBestPictureWinner, 
@@ -18,11 +18,12 @@ interface BrowseByYearsScreenProps {
   onBack: () => void;
   isAuthenticated: boolean;
   onAuthPrompt: (featureName: string) => void;
+  onGoToJourney: () => void;
 }
 
 type ViewMode = 'timeline' | 'brief';
 
-const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAuthenticated, onAuthPrompt }) => {
+const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAuthenticated, onAuthPrompt, onGoToJourney }) => {
   const [availableYears, setAvailableYears] = useState<number[]>([]);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [currentMovie, setCurrentMovie] = useState<Movie | null>(null);
@@ -463,13 +464,23 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
 
                           {/* Action Buttons */}
                           <div className="space-y-4">
-                            <button 
-                              onClick={handleBriefClick}
-                              className="w-full h-12 bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] font-semibold px-4 rounded-lg hover:from-[#DFBD69]/30 transition-all flex items-center justify-center gap-2"
-                            >
-                              <BookOpen className="w-5 h-5" />
-                              5-min Brief
-                            </button>
+                            <div className="grid grid-cols-2 gap-4">
+                              <button 
+                                onClick={handleBriefClick}
+                                className="h-12 bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] font-semibold px-4 rounded-lg hover:from-[#DFBD69]/30 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
+                              >
+                                <BookOpen className="w-5 h-5" />
+                                5-min Brief
+                              </button>
+                              
+                              <button 
+                                onClick={onGoToJourney}
+                                className="h-12 bg-neutral-700 text-white font-semibold px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
+                              >
+                                <TrendingUp className="w-5 h-5" />
+                                Moja droga
+                              </button>
+                            </div>
                             
                             <div className="grid grid-cols-2 gap-4">
                               <button 
