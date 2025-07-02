@@ -3,6 +3,7 @@ import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import DiscoverySection from './components/DiscoverySection';
 import MoodSection from './components/MoodSection';
+import RegistrationSection from './components/RegistrationSection';
 import Footer from './components/Footer';
 import AuthPromptModal from './components/AuthPromptModal';
 import LoadingSkeleton from './components/LoadingSkeleton';
@@ -260,6 +261,7 @@ function App() {
           ></div>
         </div>
       </div>
+      <RegistrationSection onRegistrationSuccess={handleLoginSuccess} />
       <Footer />
       
       <AuthPromptModal 
