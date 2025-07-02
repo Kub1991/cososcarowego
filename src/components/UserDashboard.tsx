@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, LogOut, User as UserIcon, Heart, TrendingUp, Target, Film } from 'lucide-react';
-import { getUserProfile, getUserStats, getWatchlistMovies, UserProfile, UserStats, UserWatchlistItem } from '../lib/supabase';
+import { ArrowLeft, LogOut, User as UserIcon, Heart, TrendingUp, Target, Film, Check } from 'lucide-react';
+import { getUserProfile, getUserStats, getWatchlistMovies, markMovieAsWatched, UserProfile, UserStats, UserWatchlistItem } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
 interface UserDashboardProps {
@@ -24,10 +24,21 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   const [watchlistMovies, setWatchlistMovies] = useState<UserWatchlistItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [actionFeedback, setActionFeedback] = useState<{type: 'success' | 'error', message: string} | null>(null);
 
   useEffect(() => {
     loadUserData();
   }, [user.id]);
+
+  // Clear feedback after 3 seconds
+  useEffect(() => {
+    if (actionFeedback) {
+      const timer = setTimeout(() => {
+        setActionFeedback(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [actionFeedback]);
 
   const loadUserData = async () => {
     try {
@@ -49,6 +60,28 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
       setError('Nie udało się załadować danych użytkownika');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleMarkAsWatched = async (movieId: string, movieTitle: string) => {
+    try {
+      console.log('✅ Dashboard: Marking movie as watched:', movieTitle);
+      
+      const success = await markMovieAsWatched(user.id, movieId);
+      if (success) {
+        console.log('✅ Dashboard: Successfully marked movie as watched');
+        setActionFeedback({ type: 'success', message: `"${movieTitle}" oznaczono jako obejrzany!` });
+        
+        // Refresh the watchlist to remove the movie
+        await loadUserData();
+      } else {
+        console.error('❌ Dashboard: Failed to mark movie as watched');
+        setActionFeedback({ type: 'error', message: 'Nie udało się oznaczyć filmu jako obejrzany' });
+      }
+    } catch (error) {
+      console.error('Error marking movie as watched:', error);
+      console.error('❌ Dashboard: Exception in handleMarkAsWatched:', error);
+      setActionFeedback({ type: 'error', message: 'Wystąpił błąd podczas oznaczania filmu' });
     }
   };
 
@@ -90,6 +123,24 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
 
   return (
     <div className="min-h-screen bg-[#070000]">
+      {/* Action Feedback */}
+      {actionFeedback && (
+        <div className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 ${
+          actionFeedback.type === 'success' 
+            ? 'bg-green-600 text-white' 
+            : 'bg-red-600 text-white'
+        }`}>
+          <div className="flex items-center gap-2">
+            {actionFeedback.type === 'success' ? (
+              <Check className="w-5 h-5" />
+            ) : (
+              <LogOut className="w-5 h-5" />
+            )}
+            <span className="text-sm font-medium">{actionFeedback.message}</span>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-[#1a1c1e] border-b border-neutral-700">
         <div className="max-w-6xl mx-auto px-6 py-6">
@@ -264,14 +315,26 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                   ) : (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                       {watchlistMovies.map((listMovie) => (
-                        <div key={listMovie.id} className="group">
+                        <div key={listMovie.id} className="group relative">
                           <div className="aspect-[2/3] mb-3 rounded-lg overflow-hidden bg-neutral-800">
                             <img 
                               src={formatPosterUrl(listMovie.movies?.poster_path)}
                               alt={`${listMovie.movies?.title} Poster`}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              className="w-full h-full object-cover"
                             />
+                            
+                            {/* Watched Button - appears on hover */}
+                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                              <button
+                                onClick={() => handleMarkAsWatched(listMovie.movie_id, listMovie.movies?.title || 'Film')}
+                                className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-full transition-colors duration-200 shadow-lg"
+                                title="Oznacz jako obejrzany"
+                              >
+                                <Check className="w-6 h-6" />
+                              </button>
+                            </div>
                           </div>
+                          
                           <h3 className="text-white font-medium text-sm leading-tight">
                             {listMovie.movies?.title}
                           </h3>

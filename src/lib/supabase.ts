@@ -387,6 +387,27 @@ export async function getWatchlistMovies(userId: string): Promise<UserWatchlistI
   }
 }
 
+// NEW: Function to remove movie from watchlist
+export async function removeMovieFromWatchlist(userId: string, movieId: string): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('user_watchlist')
+      .delete()
+      .eq('user_id', userId)
+      .eq('movie_id', movieId);
+
+    if (error) {
+      console.error('Error removing movie from watchlist:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error in removeMovieFromWatchlist:', error);
+    return false;
+  }
+}
+
 // ENHANCED: Weighted Kino DNA Analysis Functions
 export async function calculateKinoDNA(userId: string): Promise<KinoDNA | null> {
   try {
@@ -555,6 +576,8 @@ export async function updateUserKinoDNA(userId: string): Promise<boolean> {
 // User Watch History Functions
 export async function markMovieAsWatched(userId: string, movieId: string, rating?: number, notes?: string): Promise<boolean> {
   try {
+    console.log('📝 Supabase: Marking movie as watched for user:', userId, 'movie:', movieId);
+    
     // Check if movie is already watched
     const { data: existing } = await supabase
       .from('user_movie_watches')
@@ -565,6 +588,7 @@ export async function markMovieAsWatched(userId: string, movieId: string, rating
 
     if (existing) {
       // Movie already watched, update it
+      console.log('📝 Supabase: Movie already watched, updating record');
       const { error } = await supabase
         .from('user_movie_watches')
         .update({
@@ -576,10 +600,12 @@ export async function markMovieAsWatched(userId: string, movieId: string, rating
 
       if (error) {
         console.error('Error updating watched movie:', error);
+        console.error('❌ Supabase: Failed to update watched movie');
         return false;
       }
     } else {
       // Add new watch record
+      console.log('📝 Supabase: Adding new watch record');
       const { error } = await supabase
         .from('user_movie_watches')
         .insert({
@@ -592,19 +618,24 @@ export async function markMovieAsWatched(userId: string, movieId: string, rating
 
       if (error) {
         console.error('Error marking movie as watched:', error);
+        console.error('❌ Supabase: Failed to add new watch record');
         return false;
       }
     }
 
+    console.log('✅ Supabase: Successfully marked movie as watched');
+    
     // Update user stats and Kino DNA (now with weighted analysis)
     await Promise.all([
       updateUserStats(userId),
+      removeMovieFromWatchlist(userId, movieId), // Remove from watchlist when marked as watched
       updateUserKinoDNA(userId)
     ]);
 
     return true;
   } catch (error) {
     console.error('Error in markMovieAsWatched:', error);
+    console.error('❌ Supabase: Exception in markMovieAsWatched:', error);
     return false;
   }
 }
