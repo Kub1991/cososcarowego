@@ -138,39 +138,39 @@ const RegistrationSection: React.FC<RegistrationSectionProps> = ({ onRegistratio
   }
 
   return (
-    <section className="pt-8 pb-20 bg-[#070000]">
+    <section className="py-12 md:pt-8 md:pb-20 bg-[#070000]">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           
           {/* Left Side - UVP and Benefits */}
-          <div className="space-y-8">
+          <div className="space-y-6 lg:space-y-8 order-2 lg:order-1">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">
                 Rozpocznij swoją <span className="text-[#DFBD69]">Oscarową podróż</span>
               </h2>
-              <p className="text-neutral-400 text-lg leading-relaxed mb-8">
+              <p className="text-neutral-400 text-base lg:text-lg leading-relaxed mb-6 lg:mb-8">
                 Dołącz do tysięcy miłośników kina, którzy odkrywają najlepsze filmy w historii dzięki naszym inteligentnym rekomendacjom.
               </p>
             </div>
 
             {/* Benefits Grid */}
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
               {benefits.map((benefit, index) => {
                 const IconComponent = benefit.icon;
                 return (
                   <div 
                     key={index}
-                    className="p-4 rounded-lg border border-neutral-700"
+                    className="p-3 lg:p-4 rounded-lg border border-neutral-700"
                     style={{
                       background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(223, 189, 105, 0.15) 100%)',
                     }}
                   >
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-[#DFBD69]/20 flex items-center justify-center flex-shrink-0">
-                        <IconComponent className="w-5 h-5 text-[#DFBD69]" />
+                    <div className="flex items-start gap-2 lg:gap-3">
+                      <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-[#DFBD69]/20 flex items-center justify-center flex-shrink-0">
+                        <IconComponent className="w-4 h-4 lg:w-5 lg:h-5 text-[#DFBD69]" />
                       </div>
                       <div>
-                        <h3 className="text-white font-semibold text-sm mb-1">
+                        <h3 className="text-white font-semibold text-xs lg:text-sm mb-1">
                           {benefit.title}
                         </h3>
                         <p className="text-neutral-400 text-xs leading-relaxed">
@@ -184,35 +184,35 @@ const RegistrationSection: React.FC<RegistrationSectionProps> = ({ onRegistratio
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex items-center gap-6 pt-4">
-              <div className="flex items-center gap-2">
-                <span className="text-white font-semibold text-lg">10,000+</span>
+            <div className="flex flex-wrap items-center gap-4 lg:gap-6 pt-2 lg:pt-4">
+              <div className="flex items-center gap-1 lg:gap-2">
+                <span className="text-white font-semibold text-base lg:text-lg">10,000+</span>
                 <span className="text-neutral-400 text-sm">użytkowników</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-white font-semibold text-lg">145</span>
+              <div className="flex items-center gap-1 lg:gap-2">
+                <span className="text-white font-semibold text-base lg:text-lg">145</span>
                 <span className="text-neutral-400 text-sm">filmów oscarowych</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-white font-semibold text-lg">95</span>
+              <div className="flex items-center gap-1 lg:gap-2">
+                <span className="text-white font-semibold text-base lg:text-lg">95</span>
                 <span className="text-neutral-400 text-sm">lat historii</span>
               </div>
             </div>
           </div>
 
           {/* Right Side - Registration Form */}
-          <div>
+          <div className="order-1 lg:order-2">
             <div 
-              className="p-8 rounded-2xl border border-neutral-700"
+              className="p-6 lg:p-8 rounded-xl lg:rounded-2xl border border-neutral-700"
               style={{
                 background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
               }}
             >
-              <div className="text-center mb-8">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[#DFBD69]/20 flex items-center justify-center">
-                  <Star className="w-6 h-6 text-[#DFBD69]" />
+              <div className="text-center mb-6 lg:mb-8">
+                <div className="w-10 h-10 lg:w-12 lg:h-12 mx-auto mb-3 lg:mb-4 rounded-full bg-[#DFBD69]/20 flex items-center justify-center">
+                  <Star className="w-5 h-5 lg:w-6 lg:h-6 text-[#DFBD69]" />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">
+                <h3 className="text-lg lg:text-xl font-bold text-white mb-2">
                   Utwórz darmowe konto
                 </h3>
                 <p className="text-neutral-300 text-sm">
@@ -227,9 +227,9 @@ const RegistrationSection: React.FC<RegistrationSectionProps> = ({ onRegistratio
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-6">
                 <div>
-                  <label htmlFor="fullName" className="block text-sm font-medium text-white mb-3">
+                  <label htmlFor="fullName" className="block text-sm font-medium text-white mb-2 lg:mb-3">
                     Imię i nazwisko
                   </label>
                   <input
@@ -245,7 +245,7 @@ const RegistrationSection: React.FC<RegistrationSectionProps> = ({ onRegistratio
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-white mb-3">
+                  <label htmlFor="email" className="block text-sm font-medium text-white mb-2 lg:mb-3">
                     Adres email
                   </label>
                   <input
@@ -262,7 +262,7 @@ const RegistrationSection: React.FC<RegistrationSectionProps> = ({ onRegistratio
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-white mb-3">
+                  <label htmlFor="password" className="block text-sm font-medium text-white mb-2 lg:mb-3">
                     Hasło
                   </label>
                   <div className="relative">
@@ -289,7 +289,7 @@ const RegistrationSection: React.FC<RegistrationSectionProps> = ({ onRegistratio
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-white mb-3">
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-white mb-2 lg:mb-3">
                     Potwierdź hasło
                   </label>
                   <div className="relative">
@@ -318,7 +318,7 @@ const RegistrationSection: React.FC<RegistrationSectionProps> = ({ onRegistratio
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-[#DFBD69] text-black font-semibold py-4 rounded-lg hover:bg-[#E8C573] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full bg-[#DFBD69] text-black font-semibold py-3 lg:py-4 rounded-lg hover:bg-[#E8C573] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isLoading ? (
                     <>
@@ -331,7 +331,7 @@ const RegistrationSection: React.FC<RegistrationSectionProps> = ({ onRegistratio
                 </button>
               </form>
 
-              <p className="text-neutral-500 text-xs text-center mt-6">
+              <p className="text-neutral-500 text-xs text-center mt-4 lg:mt-6">
                 Darmowe na zawsze • Bez ukrytych opłat • Anuluj w każdej chwili
               </p>
             </div>
