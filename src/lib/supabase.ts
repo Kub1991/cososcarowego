@@ -399,16 +399,30 @@ export async function getUserOscarProgress(userId: string): Promise<OscarProgres
 
 async function getTotalWatchedOscarMovies(userId: string): Promise<number> {
   try {
+    // First, get all Oscar movie IDs
+    const { data: oscarMovies, error: oscarError } = await supabase
+      .from('movies')
+      .select('id')
+      .eq('is_best_picture_nominee', true);
+
+    if (oscarError || !oscarMovies) {
+      console.error('Error fetching Oscar movies:', oscarError);
+      return 0;
+    }
+
+    // Extract the IDs into an array
+    const oscarMovieIds = oscarMovies.map(movie => movie.id);
+
+    if (oscarMovieIds.length === 0) {
+      return 0;
+    }
+
+    // Now count watched movies using the array of IDs
     const { count, error } = await supabase
       .from('user_movie_watches')
       .select('movie_id', { count: 'exact' })
       .eq('user_id', userId)
-      .in('movie_id', 
-        supabase
-          .from('movies')
-          .select('id')
-          .eq('is_best_picture_nominee', true)
-      );
+      .in('movie_id', oscarMovieIds);
 
     if (error) {
       console.error('Error counting watched Oscar movies:', error);
