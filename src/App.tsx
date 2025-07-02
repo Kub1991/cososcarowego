@@ -251,7 +251,7 @@ function App() {
       </div>
       <MoodSection onMoodClick={handleMoodClick} />
       {/* Gradientowy separator */}
-      <div className="py-8 bg-[#070000]">
+      <div className="py-12 bg-[#070000]">
         <div className="max-w-6xl mx-auto px-6">
           <div 
             className="h-px w-full"
@@ -272,7 +272,9 @@ function App() {
           ></div>
         </div>
       </div>
-      <RegistrationSection onRegistrationSuccess={handleLoginSuccess} />
+      <div className="bg-[#070000]">
+        <RegistrationSection onRegistrationSuccess={handleLoginSuccess} />
+      </div>
       <Footer />
       
       <AuthPromptModal 
