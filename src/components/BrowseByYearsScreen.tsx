@@ -464,21 +464,23 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
 
                           {/* Action Buttons */}
                           <div className="space-y-4">
-                            <button 
-                              onClick={handleBriefClick}
-                              className="w-full bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] font-semibold py-4 px-6 rounded-lg hover:from-[#DFBD69]/30 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
-                            >
-                              <BookOpen className="w-5 h-5" />
-                              5-min Brief
-                            </button>
-                            
-                            <button 
-                              onClick={onGoToJourney}
-                              className="w-full bg-neutral-700 text-white font-semibold py-4 px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm mt-4"
-                            >
-                              <TrendingUp className="w-5 h-5" />
-                              Moja droga
-                            </button>
+                            <div className="grid grid-cols-2 gap-4">
+                              <button 
+                                onClick={handleBriefClick}
+                                className="bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] font-semibold py-4 px-4 rounded-lg hover:from-[#DFBD69]/30 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
+                              >
+                                <BookOpen className="w-5 h-5" />
+                                5-min Brief
+                              </button>
+                              
+                              <button 
+                                onClick={onGoToJourney}
+                                className="bg-neutral-700 text-white font-semibold py-4 px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
+                              >
+                                <TrendingUp className="w-5 h-5" />
+                                Moja droga
+                              </button>
+                            </div>
                             
                             <div className="grid grid-cols-2 gap-4">
                               <button 
