@@ -250,7 +250,8 @@ function App() {
         </div>
       </div>
       <MoodSection onMoodClick={handleMoodClick} />
-      <div className="py-8 bg-[#070000]">
+      {/* Gradientowy separator */}
+      <div className="bg-[#070000]">
         <div className="max-w-6xl mx-auto px-6">
           <div 
             className="h-px w-full"
@@ -260,8 +261,17 @@ function App() {
           ></div>
         </div>
       </div>
+      <RegistrationSection onRegistrationSuccess={handleLoginSuccess} />
+      {/* Gradientowy separator */}
       <div className="bg-[#070000]">
-        <RegistrationSection onRegistrationSuccess={handleLoginSuccess} />
+        <div className="max-w-6xl mx-auto px-6">
+          <div 
+            className="h-px w-full"
+            style={{
+              background: 'linear-gradient(90deg, transparent, rgba(223, 189, 105, 0.3), transparent)'
+            }}
+          ></div>
+        </div>
       </div>
       <Footer />
       
