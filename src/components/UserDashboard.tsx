@@ -111,40 +111,9 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
 
   const tabs = [
     { id: 'overview', label: 'Przegląd', icon: UserIcon },
-    { id: 'watchlist', label: 'Do obejrzenia', icon: Heart },
+    { id: 'watchlist', label: 'Lista filmów', icon: Heart },
     { id: 'journey', label: 'Moja podróż', icon: TrendingUp },
     { id: 'challenges', label: 'Wyzwania', icon: Target }
-  ];
-
-  // Discovery options for the tiles
-  const discoveryOptions = [
-    {
-      title: 'Szybki strzał',
-      subtitle: 'Losowy zwycięzca Oscara',
-      description: 'Pozwól nam wybrać za Ciebie jeden z tysięcy nagrodzonych filmów.',
-      icon: Shuffle,
-      iconImage: '/ikona-szybki-strzal.png',
-      badge: '30s',
-      onClick: onQuickShot
-    },
-    {
-      title: 'Dopasowany wybór',
-      subtitle: 'Kwestionariusz AI',
-      description: 'Odpowiedz na kilka pytań, a AI znajdzie filmy idealne dla Ciebie.',
-      icon: FileText,
-      iconImage: '/ikona-kwestionariusz.png',
-      badge: '2 min',
-      onClick: onSmartMatch
-    },
-    {
-      title: 'Przeszukaj latami',
-      subtitle: 'Eksploruj według dekad',
-      description: 'Przeglądaj najlepsze filmy z każdej dekady - od początków Hollywood.',
-      icon: Clock,
-      iconImage: '/ikona-dekady.png',
-      badge: 'Bez limitu',
-      onClick: onBrowseByYears
-    }
   ];
   if (isLoading) {
     return (
@@ -328,67 +297,29 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                 </div>
                   {/* Discovery Tiles */}
                   <div className="mb-8">
-                    <h3 className="text-xl font-bold text-white mb-4">Odkrywaj filmy</h3>
-                    <div className="grid md:grid-cols-3 gap-6">
-                      {discoveryOptions.map((option, index) => {
-                        const IconComponent = option.icon;
-                        return (
-                          <button
-                            key={index}
-                            onClick={option.onClick}
-                            disabled={!option.onClick}
-                            className="group relative bg-[#1a1c1e] rounded-xl border border-neutral-700 hover:border-[#DFBD69] transition-all duration-300 transform hover:scale-105 overflow-hidden h-48 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                            style={{
-                              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(223, 189, 105, 0.15) 100%)',
-                            }}
-                          >
-                            {/* Permanent golden overlay effect */}
-                            <div 
-                              className="absolute inset-0 rounded-xl opacity-100 pointer-events-none"
-                              style={{
-                                background: 'rgba(223, 189, 105, 0.05)',
-                              }}
-                            ></div>
-                            
-                            {/* Top section with badge, title, subtitle and description */}
-                            <div className="relative z-10 p-6 h-full flex flex-col justify-between">
-                              {/* Time Badge */}
-                              <div className="mb-4">
-                                <span 
-                                  className="text-white px-3 py-1 rounded-md text-xs font-medium"
-                                  style={{
-                                    background: 'rgba(223, 189, 105, 0.08)',
-                                  }}
-                                >
-                                  {option.badge}
-                                </span>
-                              </div>
-                              
-                              {/* Title and Icon on the same line */}
-                              <div className="flex items-center justify-between mb-2">
-                                <h4 className="text-lg font-bold text-white">
-                                  {option.title}
-                                </h4>
-                                <img 
-                                  src={option.iconImage} 
-                                  alt={`${option.title} icon`}
-                                  className="w-10 h-10 opacity-80 group-hover:opacity-100 transition-opacity duration-300"
-                                />
-                              </div>
-                              
-                              <p className="text-white/80 text-sm font-medium mb-3" style={{ textShadow: 'none' }}>
-                                {option.subtitle}
-                              </p>
-                              
-                              <p className="text-white/60 text-xs font-normal leading-snug" style={{ textShadow: 'none' }}>
-                                {option.description}
-                              </p>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
+        <div className="mb-8">
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={onQuickShot}
+              disabled={!onQuickShot}
+              className="px-4 py-2 bg-[#DFBD69] text-black font-semibold rounded-lg hover:bg-[#E8C573] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            >
+              Szybki strzał
+            </button>
+            <button
+              onClick={onSmartMatch}
+              disabled={!onSmartMatch}
+              className="px-4 py-2 bg-[#DFBD69] text-black font-semibold rounded-lg hover:bg-[#E8C573] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            >
+              Dopasowany wybór
+            </button>
+            <button
+              onClick={onBrowseByYears}
+              disabled={!onBrowseByYears}
+              className="px-4 py-2 bg-[#DFBD69] text-black font-semibold rounded-lg hover:bg-[#E8C573] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            >
+              Przeszukaj latami
+            </button>
               </div>
             )}
 
