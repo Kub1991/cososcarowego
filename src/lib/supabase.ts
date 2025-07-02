@@ -102,6 +102,20 @@ export interface UserOscarProgress {
   created_at: string;
 }
 
+// User Achievement interface
+export interface UserAchievement {
+  id: string;
+  user_id: string;
+  achievement_type: string;
+  achievement_name: string;
+  description: string;
+  icon: string | null;
+  earned_at: string;
+  progress: number;
+  max_progress: number;
+  is_completed: boolean;
+}
+
 export interface OscarProgressSummary {
   decades: UserOscarProgress[];
   years: UserOscarProgress[];
@@ -531,6 +545,27 @@ export async function removeMovieFromWatchlist(userId: string, movieId: string):
   } catch (error) {
     console.error('Error in removeMovieFromWatchlist:', error);
     return false;
+  }
+}
+
+// Get user achievements
+export async function getUserAchievements(userId: string): Promise<UserAchievement[]> {
+  try {
+    const { data, error } = await supabase
+      .from('user_achievements')
+      .select('*')
+      .eq('user_id', userId)
+      .order('earned_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching user achievements:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error in getUserAchievements:', error);
+    return [];
   }
 }
 

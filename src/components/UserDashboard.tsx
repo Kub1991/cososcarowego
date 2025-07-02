@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, LogOut, User as UserIcon, Heart, TrendingUp, Target, Film, Check, Shuffle, FileText, Clock, X } from 'lucide-react';
-import { getUserProfile, getUserStats, getWatchlistMovies, getUserOscarProgress, markMovieAsWatched, UserProfile, UserStats, UserWatchlistItem, UserOscarProgress, OscarProgressSummary } from '../lib/supabase';
+import { getUserProfile, getUserStats, getWatchlistMovies, getUserOscarProgress, getUserAchievements, markMovieAsWatched, UserProfile, UserStats, UserWatchlistItem, UserOscarProgress, OscarProgressSummary, UserAchievement } from '../lib/supabase';
 import { supabase } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
@@ -30,6 +30,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [watchlistMovies, setWatchlistMovies] = useState<UserWatchlistItem[]>([]);
   const [oscarProgress, setOscarProgress] = useState<OscarProgressSummary | null>(null);
+  const [userAchievements, setUserAchievements] = useState<UserAchievement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionFeedback, setActionFeedback] = useState<{type: 'success' | 'error', message: string} | null>(null);
@@ -66,17 +67,19 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
       setIsLoading(true);
       setError(null);
 
-      const [profile, stats, watchlist, progress] = await Promise.all([
+      const [profile, stats, watchlist, progress, achievements] = await Promise.all([
         getUserProfile(user.id),
         getUserStats(user.id),
         getWatchlistMovies(user.id),
-        getUserOscarProgress(user.id)
+        getUserOscarProgress(user.id),
+        getUserAchievements(user.id)
       ]);
 
       setUserProfile(profile);
       setUserStats(stats);
       setWatchlistMovies(watchlist);
       setOscarProgress(progress);
+      setUserAchievements(achievements);
 
     } catch (error) {
       console.error('Error loading user data:', error);
@@ -678,6 +681,48 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                           </div>
                         </div>
                       )}
+                      
+                      {/* Achievements Section */}
+                      <div>
+                        <h3 className="text-white font-semibold text-lg mb-4">Osiągnięcia</h3>
+                        {userAchievements.length > 0 ? (
+                          <div className="grid md:grid-cols-2 gap-4">
+                            {userAchievements.map((achievement) => (
+                              <div 
+                                key={achievement.id}
+                                className="p-4 rounded-lg border border-neutral-700 bg-neutral-800/50"
+                              >
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-white font-medium">
+                                    {achievement.achievement_name}
+                                  </span>
+                                  <span className={`${achievement.is_completed ? 'text-green-400' : 'text-[#DFBD69]'} font-semibold`}>
+                                    {achievement.progress}/{achievement.max_progress}
+                                  </span>
+                                </div>
+                                <div className="w-full bg-neutral-700 rounded-full h-2 mb-2">
+                                  <div 
+                                    className={`${achievement.is_completed ? 'bg-green-500' : 'bg-[#DFBD69]'} h-2 rounded-full transition-all duration-500`}
+                                    style={{ width: `${(achievement.progress / achievement.max_progress) * 100}%` }}
+                                  ></div>
+                                </div>
+                                <p className="text-neutral-400 text-xs">
+                                  {achievement.description}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div 
+                            className="p-4 rounded-lg border border-neutral-700 bg-neutral-800/50 text-center"
+                          >
+                            <Target className="w-8 h-8 text-[#DFBD69] mx-auto mb-2" />
+                            <p className="text-neutral-400 text-sm">
+                              Brak osiągnięć. Oglądaj filmy oscarowe, aby zdobywać osiągnięcia!
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ) : (
                     <div 
