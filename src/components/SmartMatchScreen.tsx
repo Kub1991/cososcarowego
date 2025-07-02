@@ -900,6 +900,14 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
                 </button>
                 
                 <button 
+                  onClick={onGoToJourney}
+                  className="bg-neutral-700 text-white font-semibold py-2 md:py-3 px-4 md:px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-sm md:text-base"
+                >
+                  <TrendingUp className="w-4 h-4 md:w-5 md:h-5" />
+                  Moja droga
+                </button>
+                
+                <button 
                   onClick={restartQuiz}
                   className="bg-neutral-700 text-white font-semibold py-2 md:py-3 px-4 md:px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-sm md:text-base"
                 >
