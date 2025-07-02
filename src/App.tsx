@@ -13,13 +13,15 @@ import type { User, Session } from '@supabase/supabase-js';
 const QuickShotScreen = React.lazy(() => import('./components/QuickShotScreen'));
 const SmartMatchScreen = React.lazy(() => import('./components/SmartMatchScreen'));
 const BrowseByYearsScreen = React.lazy(() => import('./components/BrowseByYearsScreen'));
+const MoodQuickShotScreen = React.lazy(() => import('./components/MoodQuickShotScreen'));
 const UserDashboard = React.lazy(() => import('./components/UserDashboard'));
 
-type ViewType = 'main' | 'quickShot' | 'smartMatch' | 'browseByYears' | 'dashboard';
+type ViewType = 'main' | 'quickShot' | 'smartMatch' | 'browseByYears' | 'moodQuickShot' | 'dashboard';
 type DashboardTab = 'overview' | 'watchlist' | 'journey' | 'challenges' | 'analytics';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('main');
+  const [selectedMood, setSelectedMood] = useState<string>('');
   const [dashboardInitialTab, setDashboardInitialTab] = useState<DashboardTab>('overview');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authPromptFeature, setAuthPromptFeature] = useState<string>('tej funkcji');
@@ -68,8 +70,14 @@ function App() {
     setCurrentView('browseByYears');
   };
 
+  const handleMoodClick = (mood: string) => {
+    setSelectedMood(mood);
+    setCurrentView('moodQuickShot');
+  };
+
   const handleBackToMain = () => {
     setCurrentView('main');
+    setSelectedMood(''); // Clear selected mood when going back
   };
 
   const handleGoToDashboard = (initialTab: DashboardTab = 'overview') => {
@@ -194,6 +202,26 @@ function App() {
     );
   }
 
+  if (currentView === 'moodQuickShot') {
+    return (
+      <Suspense fallback={<LoadingSkeleton type="quickshot" />}>
+        <MoodQuickShotScreen 
+          selectedMood={selectedMood}
+          onBack={handleBackToMain}
+          isAuthenticated={isAuthenticated}
+          onAuthPrompt={openAuthModal}
+          onGoToJourney={handleGoToJourney}
+        />
+        <AuthPromptModal 
+          isOpen={showAuthModal}
+          onClose={closeAuthModal}
+          featureName={authPromptFeature}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      </Suspense>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#070000]">
       <Header 
@@ -219,7 +247,7 @@ function App() {
           ></div>
         </div>
       </div>
-      <MoodSection />
+      <MoodSection onMoodClick={handleMoodClick} />
       {/* Gradientowy separator */}
       <div className="py-8 bg-[#070000]">
         <div className="max-w-6xl mx-auto px-6">

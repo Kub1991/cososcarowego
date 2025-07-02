@@ -1,32 +1,48 @@
 import React from 'react';
 
-const MoodSection: React.FC = () => {
+interface MoodSectionProps {
+  onMoodClick?: (mood: string) => void;
+}
+
+const MoodSection: React.FC<MoodSectionProps> = ({ onMoodClick }) => {
   const moods = [
     {
+      id: 'Inspiracja',
       name: 'Inspiracja',
       image: '/inspiracja.jpg'
     },
     {
+      id: 'Adrenalina',
       name: 'Adrenalina',
       image: '/adrenalina.jpg'
     },
     {
+      id: 'Głębokie emocje',
       name: 'Głębokie emocje',
       image: '/glebokie-emocje.jpg'
     },
     {
+      id: 'Humor',
       name: 'Humor',
       image: '/humor.jpg'
     },
     {
+      id: 'Coś ambitnego',
       name: 'Coś ambitnego',
       image: '/cos-ambitnego.jpg'
     },
     {
+      id: 'Romantyczny wieczór',
       name: 'Romantyczny wieczór',
       image: '/romantyczny-wieczor.jpg'
     }
   ];
+
+  const handleMoodClick = (mood: string) => {
+    if (onMoodClick) {
+      onMoodClick(mood);
+    }
+  };
 
   return (
     <section className="py-20 bg-[#070000]">
@@ -45,6 +61,7 @@ const MoodSection: React.FC = () => {
           {moods.map((mood, index) => (
             <button
               key={index}
+              onClick={() => handleMoodClick(mood.id)}
               className="group relative bg-[#1a1c1e] text-white rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 border border-neutral-700 hover:border-transparent overflow-hidden h-64"
             >
               {/* Background Image - Always Visible */}

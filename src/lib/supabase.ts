@@ -63,7 +63,7 @@ export interface UserWatchlistItem {
   user_id: string;
   movie_id: string;
   added_at: string;
-  movie?: Movie;
+  movies?: Movie;
 }
 
 export interface UserMovieWatch {
@@ -882,6 +882,85 @@ export async function getRandomOscarMovie(): Promise<Movie | null> {
   } catch (error) {
     console.error('Error in getRandomOscarMovie:', error);
     console.error('❌ Supabase: Exception in getRandomOscarMovie:', error);
+    return null;
+  }
+}
+
+// NEW: Get random Oscar movie by mood
+export async function getRandomOscarMovieByMood(mood: string): Promise<Movie | null> {
+  try {
+    console.log('🎭 Supabase: Starting mood-based movie selection for:', mood);
+    
+    // Step 1: Get movies that match the mood and were least recently selected
+    const { data: moodMovies, error: queryError } = await supabase
+      .from('movies')
+      .select('*')
+      .eq('is_best_picture_nominee', true)
+      .contains('mood_tags', [mood]) // Filter by mood tag
+      .order('last_selected_at', { ascending: true }) // Oldest selections first, NULL comes first
+      .limit(50); // Get a good pool for variety
+
+    if (queryError || !moodMovies || moodMovies.length === 0) {
+      console.error('Error fetching mood movies:', queryError);
+      console.error('❌ Supabase: No movies found for mood:', mood);
+      
+      // Fallback: Try to get any movies with mood tags if specific mood fails
+      const { data: fallbackMovies, error: fallbackError } = await supabase
+        .from('movies')
+        .select('*')
+        .eq('is_best_picture_nominee', true)
+        .not('mood_tags', 'is', null)
+        .limit(20);
+
+      if (fallbackError || !fallbackMovies || fallbackMovies.length === 0) {
+        console.error('Fallback mood query also failed:', fallbackError);
+        console.error('❌ Supabase: No movies with mood tags found');
+        return null;
+      }
+
+      console.log('🔄 Supabase: Using fallback mood selection from', fallbackMovies.length, 'movies');
+      return fallbackMovies[Math.floor(Math.random() * fallbackMovies.length)];
+    }
+
+    console.log('📊 Supabase: Found', moodMovies.length, 'movies for mood:', mood);
+    
+    // Step 2: Randomly select one movie from the mood-filtered pool
+    const selectedMovie = moodMovies[Math.floor(Math.random() * moodMovies.length)];
+
+    // 🔍 DEBUG: Log the selected movie details
+    console.log('🎯 Supabase: Selected mood movie:', {
+      id: selectedMovie.id,
+      title: selectedMovie.title,
+      oscar_year: selectedMovie.oscar_year,
+      mood_tags: selectedMovie.mood_tags,
+      selected_mood: mood,
+      last_selected_at: selectedMovie.last_selected_at || 'Never selected before'
+    });
+
+    // Step 3: Update the selected movie's last_selected_at timestamp
+    const { error: updateError } = await supabase
+      .from('movies')
+      .update({ 
+        last_selected_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', selectedMovie.id);
+
+    if (updateError) {
+      console.error('Error updating last_selected_at for mood movie:', updateError);
+      console.error('❌ Supabase: Failed to update last_selected_at for mood movie:', selectedMovie.title);
+      // Don't fail the whole operation if timestamp update fails
+    } else {
+      console.log('✅ Supabase: Successfully updated last_selected_at for mood movie:', selectedMovie.title);
+    }
+
+    console.log(`🎭 Mood Selection (${mood}): Chose "${selectedMovie.title}" from pool of ${moodMovies.length} movies`);
+    
+    return selectedMovie;
+
+  } catch (error) {
+    console.error('Error in getRandomOscarMovieByMood:', error);
+    console.error('❌ Supabase: Exception in getRandomOscarMovieByMood:', error);
     return null;
   }
 }

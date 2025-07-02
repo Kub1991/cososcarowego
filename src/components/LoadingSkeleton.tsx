@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface LoadingSkeletonProps {
-  type: 'dashboard' | 'quickshot' | 'smartmatch' | 'browse';
+  type: 'dashboard' | 'quickshot' | 'smartmatch' | 'browse' | 'moodQuickShot';
 }
 
 const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({ type }) => {
@@ -154,6 +154,46 @@ const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({ type }) => {
     </div>
   );
 
+  const renderMoodQuickShotSkeleton = () => (
+    <div className="min-h-screen bg-[#070000] flex items-center justify-center">
+      <div className="w-full max-w-4xl mx-auto p-8">
+        <div className="text-center mb-8">
+          {/* Mood emoji skeleton */}
+          <div className="w-16 h-16 bg-neutral-700 rounded-full animate-pulse mx-auto mb-4"></div>
+          <div className="h-8 w-80 bg-neutral-700 rounded animate-pulse mx-auto mb-4"></div>
+          <div className="h-4 w-48 bg-neutral-800 rounded animate-pulse mx-auto"></div>
+        </div>
+        
+        <div className="grid lg:grid-cols-5 gap-8">
+          {/* Poster skeleton */}
+          <div className="lg:col-span-2">
+            <div className="aspect-[2/3] bg-neutral-800 rounded-lg animate-pulse"></div>
+          </div>
+          
+          {/* Content skeleton */}
+          <div className="lg:col-span-3 space-y-6">
+            <div className="space-y-3">
+              <div className="h-8 w-3/4 bg-neutral-700 rounded animate-pulse"></div>
+              <div className="h-4 w-1/2 bg-neutral-800 rounded animate-pulse"></div>
+            </div>
+            
+            <div className="space-y-2">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-4 bg-neutral-800 rounded animate-pulse"></div>
+              ))}
+            </div>
+            
+            <div className="space-y-3">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-12 bg-neutral-700 rounded animate-pulse"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   switch (type) {
     case 'dashboard':
       return renderDashboardSkeleton();
@@ -163,6 +203,8 @@ const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({ type }) => {
       return renderSmartMatchSkeleton();
     case 'browse':
       return renderBrowseSkeleton();
+    case 'moodQuickShot':
+      return renderMoodQuickShotSkeleton();
     default:
       return (
         <div className="min-h-screen bg-[#070000] flex items-center justify-center">
