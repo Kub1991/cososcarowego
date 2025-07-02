@@ -187,7 +187,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                     >
                       <div className="flex items-center gap-3 mb-2">
                         <Film className="w-6 h-6 text-[#DFBD69]" />
-                        <span className="text-white font-semibold">Obejrzane</span>
+                        <span className="text-white font-semibold whitespace-nowrap overflow-hidden text-ellipsis">Obejrzane</span>
                       </div>
                       <p className="text-2xl font-bold text-[#DFBD69]">
                         {userStats?.watched_movies || 0}
@@ -203,7 +203,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                     >
                       <div className="flex items-center gap-3 mb-2">
                         <Heart className="w-6 h-6 text-[#DFBD69]" />
-                        <span className="text-white font-semibold">Do obejrzenia</span>
+                        <span className="text-white font-semibold whitespace-nowrap overflow-hidden text-ellipsis">Do obejrzenia</span>
                       </div>
                       <p className="text-2xl font-bold text-[#DFBD69]">
                         {userStats?.watchlist_movies || 0}
@@ -219,7 +219,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                     >
                       <div className="flex items-center gap-3 mb-2">
                         <TrendingUp className="w-6 h-6 text-[#DFBD69]" />
-                        <span className="text-white font-semibold">Poziom</span>
+                        <span className="text-white font-semibold whitespace-nowrap overflow-hidden text-ellipsis">Poziom</span>
                       </div>
                       <p className="text-2xl font-bold text-[#DFBD69]">
                         {userProfile?.level || 1}
@@ -235,7 +235,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                     >
                       <div className="flex items-center gap-3 mb-2">
                         <Target className="w-6 h-6 text-[#DFBD69]" />
-                        <span className="text-white font-semibold">Osiągnięcia</span>
+                        <span className="text-white font-semibold whitespace-nowrap overflow-hidden text-ellipsis">Osiągnięcia</span>
                       </div>
                       <p className="text-2xl font-bold text-[#DFBD69]">
                         {userStats?.achievements_count || 0}
