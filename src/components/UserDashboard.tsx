@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, LogOut, User as UserIcon, Heart, TrendingUp, Target, Film, Check, Shuffle, FileText, Clock } from 'lucide-react';
+import { ArrowLeft, LogOut, User as UserIcon, Heart, TrendingUp, Target, Film, Check, Shuffle, FileText, Clock, X } from 'lucide-react';
 import { getUserProfile, getUserStats, getWatchlistMovies, getUserOscarProgress, markMovieAsWatched, UserProfile, UserStats, UserWatchlistItem, UserOscarProgress, OscarProgressSummary } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
 interface UserDashboardProps {
   user: User;
   onBack: () => void;
   onLogout: () => void;
-  initialTab?: 'overview' | 'watchlist' | 'journey' | 'challenges';
+  initialTab?: 'overview' | 'watchlist' | 'journey';
   onQuickShot?: () => void;
   onSmartMatch?: () => void;
   onBrowseByYears?: () => void;
 }
 
-type DashboardTab = 'overview' | 'watchlist' | 'journey' | 'challenges';
+type DashboardTab = 'overview' | 'watchlist' | 'journey';
 
 const UserDashboard: React.FC<UserDashboardProps> = ({ 
   user, 
@@ -32,6 +33,18 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionFeedback, setActionFeedback] = useState<{type: 'success' | 'error', message: string} | null>(null);
+  const [selectedProgress, setSelectedProgress] = useState<{
+    type: 'decade' | 'year';
+    identifier: string;
+    title: string;
+    progress: UserOscarProgress;
+  } | null>(null);
+  const [progressMovies, setProgressMovies] = useState<{
+    watched: UserWatchlistItem[];
+    toWatch: UserWatchlistItem[];
+  }>({ watched: [], toWatch: [] });
+  const [aiInsight, setAiInsight] = useState<string>('');
+  const [isLoadingInsight, setIsLoadingInsight] = useState(false);
 
   useEffect(() => {
     loadUserData();
@@ -94,6 +107,89 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
     }
   };
 
+  const handleProgressClick = async (type: 'decade' | 'year', identifier: string, progress: UserOscarProgress) => {
+    const title = type === 'decade' ? getDecadeDisplayName(identifier) : `Oscary ${identifier}`;
+    setSelectedProgress({ type, identifier, title, progress });
+    setIsLoadingInsight(true);
+    setAiInsight('');
+    
+    try {
+      // Get movies for this category
+      const { data: allMovies, error: moviesError } = await supabase
+        .from('movies')
+        .select('*')
+        .eq('is_best_picture_nominee', true)
+        .eq(type === 'decade' ? 'oscar_year' : 'oscar_year', 
+            type === 'decade' ? 
+              (identifier === '2000s' ? [2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010] :
+               identifier === '2010s' ? [2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020] : []) :
+              parseInt(identifier)
+        );
+
+      if (moviesError) throw moviesError;
+
+      // Filter movies by decade if needed
+      const filteredMovies = type === 'decade' ? 
+        allMovies?.filter(movie => {
+          if (identifier === '2000s') return movie.oscar_year >= 2001 && movie.oscar_year <= 2010;
+          if (identifier === '2010s') return movie.oscar_year >= 2011 && movie.oscar_year <= 2020;
+          return false;
+        }) : allMovies;
+
+      // Get user's watched movies
+      const { data: watchedMovies, error: watchedError } = await supabase
+        .from('user_movie_watches')
+        .select(`
+          movie_id,
+          movies (*)
+        `)
+        .eq('user_id', user.id);
+
+      if (watchedError) throw watchedError;
+
+      const watchedMovieIds = new Set(watchedMovies?.map(w => w.movie_id) || []);
+      
+      const watched = filteredMovies?.filter(movie => watchedMovieIds.has(movie.id))
+        .map(movie => ({ id: movie.id, movie_id: movie.id, user_id: user.id, added_at: '', movies: movie })) || [];
+      
+      const toWatch = filteredMovies?.filter(movie => !watchedMovieIds.has(movie.id))
+        .map(movie => ({ id: movie.id, movie_id: movie.id, user_id: user.id, added_at: '', movies: movie })) || [];
+
+      setProgressMovies({ watched, toWatch });
+
+      // Generate AI insight
+      const response = await fetch(`${supabase.supabaseUrl}/functions/v1/movie-recommendations`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabase.supabaseKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'progress-insight',
+          categoryType: type,
+          categoryIdentifier: identifier,
+          watchedCount: watched.length,
+          totalCount: filteredMovies?.length || 0,
+          toWatchMovies: toWatch.map(m => ({
+            title: m.movies?.title,
+            thematic_tags: m.movies?.thematic_tags,
+            mood_tags: m.movies?.mood_tags,
+            vote_average: m.movies?.vote_average
+          }))
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setAiInsight(result.insight || 'Kontynuuj swoją podróż przez kino oscarowe!');
+      }
+    } catch (error) {
+      console.error('Error loading progress details:', error);
+    } finally {
+      setIsLoadingInsight(false);
+    }
+  };
+
   const formatPosterUrl = (posterPath: string | null | undefined) => {
     if (!posterPath) return '/jpiDCxkCbo0.movieposter_maxres.jpg';
     return `https://image.tmdb.org/t/p/w500${posterPath}`;
@@ -131,8 +227,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   const tabs = [
     { id: 'overview', label: 'Przegląd', icon: UserIcon },
     { id: 'watchlist', label: 'Do obejrzenia', icon: Heart },
-    { id: 'journey', label: 'Moja podróż', icon: TrendingUp },
-    { id: 'challenges', label: 'Wyzwania', icon: Target }
+    { id: 'journey', label: 'Moja podróż', icon: TrendingUp }
   ];
 
   if (isLoading) {
@@ -471,7 +566,8 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                             {oscarProgress.decades.map((decade) => (
                               <div 
                                 key={decade.id}
-                                className="p-4 rounded-lg border border-neutral-700 bg-neutral-800/50"
+                                className="p-4 rounded-lg border border-neutral-700 bg-neutral-800/50 cursor-pointer hover:bg-neutral-700/50 transition-colors"
+                                onClick={() => handleProgressClick('decade', decade.category_identifier, decade)}
                               >
                                 <div className="flex items-center justify-between mb-2">
                                   <span className="text-white font-medium">
@@ -504,7 +600,8 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                             {oscarProgress.years.map((year) => (
                               <div 
                                 key={year.id}
-                                className="p-4 rounded-lg border border-neutral-700 bg-neutral-800/50"
+                                className="p-4 rounded-lg border border-neutral-700 bg-neutral-800/50 cursor-pointer hover:bg-neutral-700/50 transition-colors"
+                                onClick={() => handleProgressClick('year', year.category_identifier, year)}
                               >
                                 <div className="flex items-center justify-between mb-2">
                                   <span className="text-white font-medium">
@@ -560,29 +657,144 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                 </div>
               </div>
             )}
-
-            {/* Challenges Tab */}
-            {activeTab === 'challenges' && (
-              <div className="space-y-8">
-                <div>
-                  <h2 className="text-2xl font-bold text-white mb-6">Wyzwania</h2>
-                  <div 
-                    className="p-8 rounded-xl border border-neutral-700 text-center"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
-                    }}
-                  >
-                    <Target className="w-12 h-12 text-[#DFBD69] mx-auto mb-4" />
-                    <h3 className="text-white font-semibold text-lg mb-2">Podejmij wyzwania</h3>
-                    <p className="text-neutral-400">
-                      Ta sekcja będzie dostępna wkrótce. Tutaj będziesz mógł podejmować różne wyzwania filmowe.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
+
+        {/* Progress Detail Modal */}
+        {selectedProgress && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-[#1a1c1e] rounded-2xl border border-neutral-700">
+              {/* Close Button */}
+              <button
+                onClick={() => setSelectedProgress(null)}
+                className="absolute top-4 right-4 z-10 p-2 text-neutral-400 hover:text-white transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              {/* Header */}
+              <div className="p-6 border-b border-neutral-700">
+                <h2 className="text-2xl font-bold text-white mb-2">{selectedProgress.title}</h2>
+                <div className="flex items-center gap-4 text-sm text-neutral-300">
+                  <span>Obejrzane: {selectedProgress.progress.movies_watched_count}</span>
+                  <span>Pozostało: {selectedProgress.progress.total_movies_in_category - selectedProgress.progress.movies_watched_count}</span>
+                  <span className="text-[#DFBD69] font-semibold">{selectedProgress.progress.progress_percentage}% ukończone</span>
+                </div>
+              </div>
+
+              {/* AI Insight */}
+              <div className="p-6 border-b border-neutral-700">
+                <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-[#DFBD69]" />
+                  AI Insight
+                </h3>
+                <div 
+                  className="p-4 rounded-lg border border-neutral-700"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
+                  }}
+                >
+                  {isLoadingInsight ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-[#DFBD69] rounded-full animate-spin border-t-transparent"></div>
+                      <span className="text-neutral-300">Analizuję Twój postęp...</span>
+                    </div>
+                  ) : (
+                    <p className="text-neutral-200 leading-relaxed">{aiInsight}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Movies Lists */}
+              <div className="p-6">
+                {/* Watched Movies */}
+                {progressMovies.watched.length > 0 && (
+                  <div className="mb-8">
+                    <h3 className="text-white font-semibold text-lg mb-4">
+                      ✅ Obejrzane ({progressMovies.watched.length})
+                    </h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                      {progressMovies.watched.map((listMovie) => (
+                        <div key={listMovie.id} className="group relative">
+                          <div className="aspect-[2/3] mb-3 rounded-lg overflow-hidden bg-neutral-800 relative">
+                            <img 
+                              src={formatPosterUrl(listMovie.movies?.poster_path)}
+                              alt={`${listMovie.movies?.title} Poster`}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute top-2 right-2">
+                              <div className="bg-green-600 text-white p-1 rounded-full">
+                                <Check className="w-4 h-4" />
+                              </div>
+                            </div>
+                          </div>
+                          <h3 className="text-white font-medium text-sm leading-tight">
+                            {listMovie.movies?.title}
+                          </h3>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* To Watch Movies */}
+                {progressMovies.toWatch.length > 0 && (
+                  <div>
+                    <h3 className="text-white font-semibold text-lg mb-4">
+                      📋 Do obejrzenia ({progressMovies.toWatch.length})
+                    </h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                      {progressMovies.toWatch.map((listMovie) => (
+                        <div key={listMovie.id} className="group relative">
+                          <div className="aspect-[2/3] mb-3 rounded-lg overflow-hidden bg-neutral-800 relative">
+                            <img 
+                              src={formatPosterUrl(listMovie.movies?.poster_path)}
+                              alt={`${listMovie.movies?.title} Poster`}
+                              className="w-full h-full object-cover"
+                            />
+                            
+                            {/* Desktop: Watched Button - appears on hover */}
+                            <div className="hidden md:flex absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center justify-center">
+                              <button
+                                onClick={() => handleMarkAsWatched(listMovie.movie_id, listMovie.movies?.title || 'Film')}
+                                className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-full transition-colors duration-200 shadow-lg"
+                                title="Oznacz jako obejrzany"
+                              >
+                                <Check className="w-6 h-6" />
+                              </button>
+                            </div>
+                            
+                            {/* Mobile: Always visible watched button in top-right corner */}
+                            <div className="md:hidden absolute top-2 right-2">
+                              <button
+                                onClick={() => handleMarkAsWatched(listMovie.movie_id, listMovie.movies?.title || 'Film')}
+                                className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-full transition-colors duration-200 shadow-lg"
+                                title="Oznacz jako obejrzany"
+                                aria-label="Oznacz jako obejrzany"
+                              >
+                                <Check className="w-6 h-6" />
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <h3 className="text-white font-medium text-sm leading-tight">
+                            {listMovie.movies?.title}
+                          </h3>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {progressMovies.watched.length === 0 && progressMovies.toWatch.length === 0 && (
+                  <div className="text-center py-8">
+                    <p className="text-neutral-400">Brak filmów w tej kategorii</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
