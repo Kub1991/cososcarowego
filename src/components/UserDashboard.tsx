@@ -696,9 +696,6 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                                   <span className="text-white font-medium">
                                     {achievement.achievement_name}
                                   </span>
-                                  <span className={`${achievement.is_completed ? 'text-green-400' : 'text-[#DFBD69]'} font-semibold`}>
-                                    {achievement.progress}/{achievement.max_progress}
-                                  </span>
                                 </div>
                                 <div className="w-full bg-neutral-700 rounded-full h-2 mb-2">
                                   <div 
@@ -707,7 +704,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                                   ></div>
                                 </div>
                                 <p className="text-neutral-400 text-xs">
-                                  {achievement.description}
+                                  {achievement.description.replace('Obejrzałeś wszystkie filmy nominowane do Oscara w', 'Obejrzałeś wszystkie filmy nominowane w Best Picture w')}
                                 </p>
                               </div>
                             ))}
