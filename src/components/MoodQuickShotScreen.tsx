@@ -581,16 +581,6 @@ const MoodQuickShotScreen: React.FC<MoodQuickShotScreenProps> = ({
                     </div>
                   </div>
                 )}
-
-                <div className="text-center mt-8">
-                  <button 
-                    onClick={() => setCurrentStep('result')}
-                    className="bg-[#DFBD69] text-black font-semibold py-3 px-8 rounded-lg hover:bg-[#E8C573] transition-colors flex items-center justify-center gap-2 mx-auto"
-                  >
-                    <Play className="w-5 h-5" />
-                    Gotowy do oglądania
-                  </button>
-                </div>
               </div>
             </div>
           )}
