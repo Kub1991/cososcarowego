@@ -45,6 +45,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   }>({ watched: [], toWatch: [] });
   const [aiInsight, setAiInsight] = useState<string>('');
   const [isLoadingInsight, setIsLoadingInsight] = useState(false);
+  const [isUpdatingProgress, setIsUpdatingProgress] = useState(false);
 
   useEffect(() => {
     loadUserData();
@@ -85,14 +86,52 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
     }
   };
 
-  const handleMarkAsWatched = async (movieId: string, movieTitle: string) => {
+  const handleMarkAsWatched = async (movieId: string, movieTitle: string, listMovie?: UserWatchlistItem) => {
     try {
+      setIsUpdatingProgress(true);
       console.log('✅ Dashboard: Marking movie as watched:', movieTitle);
       
       const success = await markMovieAsWatched(user.id, movieId);
       if (success) {
         console.log('✅ Dashboard: Successfully marked movie as watched');
         setActionFeedback({ type: 'success', message: `"${movieTitle}" oznaczono jako obejrzany!` });
+        
+        // If we're in progress detail view, update the lists immediately
+        if (selectedProgress && listMovie) {
+          // Move the movie from toWatch to watched
+          setProgressMovies(prev => {
+            // Remove from toWatch
+            const newToWatch = prev.toWatch.filter(m => m.movie_id !== movieId);
+            
+            // Add to watched (only if not already there)
+            const alreadyInWatched = prev.watched.some(m => m.movie_id === movieId);
+            const newWatched = alreadyInWatched 
+              ? prev.watched 
+              : [...prev.watched, listMovie];
+            
+            return {
+              toWatch: newToWatch,
+              watched: newWatched
+            };
+          });
+          
+          // Update the progress counts and percentage
+          setSelectedProgress(prev => {
+            if (!prev) return null;
+            
+            const newWatchedCount = prev.progress.movies_watched_count + 1;
+            const newPercentage = Math.round((newWatchedCount / prev.progress.total_movies_in_category) * 100);
+            
+            return {
+              ...prev,
+              progress: {
+                ...prev.progress,
+                movies_watched_count: newWatchedCount,
+                progress_percentage: newPercentage
+              }
+            };
+          });
+        }
         
         // Refresh the data to show updated progress
         await loadUserData();
@@ -104,6 +143,8 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
       console.error('Error marking movie as watched:', error);
       console.error('❌ Dashboard: Exception in handleMarkAsWatched:', error);
       setActionFeedback({ type: 'error', message: 'Wystąpił błąd podczas oznaczania filmu' });
+    } finally {
+      setIsUpdatingProgress(false);
     }
   };
 
@@ -508,8 +549,9 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                             {/* Mobile: Always visible watched button in top-right corner */}
                             <div className="md:hidden absolute top-2 right-2">
                               <button
-                                onClick={() => handleMarkAsWatched(listMovie.movie_id, listMovie.movies?.title || 'Film')}
-                                className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-full transition-colors duration-200 shadow-lg"
+                                onClick={() => handleMarkAsWatched(listMovie.movie_id, listMovie.movies?.title || 'Film', listMovie)}
+                                className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-full transition-colors duration-200 shadow-lg disabled:opacity-50"
+                                disabled={isUpdatingProgress}
                                 title="Oznacz jako obejrzany"
                                 aria-label="Oznacz jako obejrzany"
                               >
@@ -767,8 +809,9 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                             {/* Desktop: Watched Button - appears on hover */}
                             <div className="hidden md:flex absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center justify-center">
                               <button
-                                onClick={() => handleMarkAsWatched(listMovie.movie_id, listMovie.movies?.title || 'Film')}
-                                className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-full transition-colors duration-200 shadow-lg"
+                                onClick={() => handleMarkAsWatched(listMovie.movie_id, listMovie.movies?.title || 'Film', listMovie)}
+                                className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-full transition-colors duration-200 shadow-lg disabled:opacity-50"
+                                disabled={isUpdatingProgress}
                                 title="Oznacz jako obejrzany"
                               >
                                 <Check className="w-6 h-6" />
@@ -778,8 +821,9 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                             {/* Mobile: Always visible watched button in top-right corner */}
                             <div className="md:hidden absolute top-2 right-2">
                               <button
-                                onClick={() => handleMarkAsWatched(listMovie.movie_id, listMovie.movies?.title || 'Film')}
-                                className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-full transition-colors duration-200 shadow-lg"
+                                onClick={() => handleMarkAsWatched(listMovie.movie_id, listMovie.movies?.title || 'Film', listMovie)}
+                                className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-full transition-colors duration-200 shadow-lg disabled:opacity-50"
+                                disabled={isUpdatingProgress}
                                 title="Oznacz jako obejrzany"
                                 aria-label="Oznacz jako obejrzany"
                               >
