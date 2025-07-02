@@ -951,7 +951,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
                       {parseBriefSections(briefText).map((section, index) => (
                         <div 
                           key={index}
-                          className="p-6 rounded-lg border border-neutral-700"
+                          className="p-6 mx-6 md:mx-0 rounded-lg border border-neutral-700"
                           style={{
                             background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
                           }}
