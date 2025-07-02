@@ -466,7 +466,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                       {/* Decade Progress */}
                       {oscarProgress.decades.length > 0 && (
                         <div>
-                          <h3 className="text-white font-semibold text-lg mb-4">Postęp według dekad</h3>
+                          <h3 className="text-white font-semibold text-lg mb-4">Postęp według lat</h3>
                           <div className="space-y-4">
                             {oscarProgress.decades.map((decade) => (
                               <div 
