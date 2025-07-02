@@ -8,13 +8,9 @@ const corsHeaders = {
 }
 
 interface RecommendationRequest {
-  type: 'quick-shot' | 'explanation' | 'brief' | 'smart-match' | 'progress-recommendation'
+  type: 'quick-shot' | 'explanation' | 'brief' | 'smart-match'
   movieId?: string
   tmdbId?: number
-  userId?: string
-  categoryType?: 'decade' | 'oscar_year'
-  categoryId?: string
-  remainingMovies?: Movie[]
   userPreferences?: {
     mood?: string
     time?: string
@@ -331,34 +327,6 @@ serve(async (req) => {
         JSON.stringify({ 
           brief: briefText,
           movie: movie
-        }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
-
-    if (requestData.type === 'progress-recommendation') {
-      if (!requestData.remainingMovies || requestData.remainingMovies.length === 0) {
-        return new Response(
-          JSON.stringify({ 
-            recommendation: 'Gratulacje! Ukończyłeś wszystkie filmy z tej kategorii!' 
-          }),
-          { 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
-        )
-      }
-
-      const recommendation = await generateProgressRecommendation(
-        requestData.categoryType || 'decade',
-        requestData.categoryId || '',
-        requestData.remainingMovies
-      )
-
-      return new Response(
-        JSON.stringify({ 
-          recommendation 
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -1049,111 +1017,5 @@ Rozpocznij od: "🎬 **CO CZYNI TEN FILM WYJĄTKOWYM**"`
   } catch (error) {
     console.error('Error generating brief:', error)
     return `"${movie.title}" (${movie.year}) - ${movie.overview || 'Klasyczny film oscarowy, który warto obejrzeć.'}`
-  }
-}
-
-// NEW: Generate AI recommendation for progress completion
-async function generateProgressRecommendation(categoryType: string, categoryId: string, remainingMovies: Movie[]): Promise<string> {
-  const openaiApiKey = Deno.env.get('OPENAI_API_KEY')
-  
-  if (!openaiApiKey) {
-    return generateProgressFallback(categoryType, categoryId, remainingMovies)
-  }
-
-  try {
-    const categoryName = categoryType === 'decade' 
-      ? (categoryId === '2000s' ? 'dekady 2000-2009' : categoryId === '2010s' ? 'dekady 2010-2019' : `dekady ${categoryId}`)
-      : `roku oscarowego ${categoryId}`
-
-    const moviesList = remainingMovies.slice(0, 8).map(movie => 
-      `- "${movie.title}" (${movie.year}) - ${movie.is_best_picture_winner ? 'Zwycięzca' : 'Nominowany'} - ${movie.thematic_tags?.map(t => t.tag).join(', ') || 'Dramat'} - Ocena: ${movie.vote_average || 'N/A'}/10`
-    ).join('\n')
-
-    const prompt = `Jesteś ekspertem od filmów, który pomaga użytkownikom ukończyć ich oscarową podróż. Użytkownik ma do obejrzenia jeszcze ${remainingMovies.length} filmów z ${categoryName}.
-
-POZOSTAŁE FILMY DO OBEJRZENIA:
-${moviesList}
-
-ZADANIE: Napisz krótką, zachęcającą rekomendację (2-3 zdania) która:
-1. 🎯 Sugeruje konkretny film do obejrzenia w zależności od nastroju
-2. 💡 Daje praktyczne wskazówki (np. "jeśli masz ochotę na coś lekkiego", "jeśli wolisz coś mocnego")
-3. 🏆 Motywuje do ukończenia kategorii
-4. 📊 Wspomina ile filmów zostało
-
-STYL: Przyjazny, motywujący, konkretny. Używaj emotikonów oszczędnie.
-
-PRZYKŁAD: "Zostały Ci jeszcze 4 filmy do ukończenia ${categoryName}! Jeśli masz ochotę na coś lekkiego i zabawnego, polecam 'Chicago', ale jeśli wolisz coś mocnego z nutką kryminału, sięgnij po 'The Departed'. Jesteś już tak blisko celu!"
-
-Napisz rekomendację dla ${remainingMovies.length} pozostałych filmów:`
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o',
-        messages: [
-          {
-            role: 'system',
-            content: 'Jesteś ekspertem od filmów, który tworzy krótkie, motywujące rekomendacje dla użytkowników kończących swoje oscarowe wyzwania. Zawsze sugerujesz konkretne filmy i jesteś zachęcający.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        max_tokens: 200,
-        temperature: 0.8
-      })
-    })
-
-    if (!response.ok) {
-      throw new Error('OpenAI API error')
-    }
-
-    const data = await response.json()
-    const aiRecommendation = data.choices[0]?.message?.content?.trim()
-    
-    if (aiRecommendation && aiRecommendation.length > 10) {
-      return aiRecommendation
-    } else {
-      return generateProgressFallback(categoryType, categoryId, remainingMovies)
-    }
-
-  } catch (error) {
-    console.error('Error generating progress recommendation:', error)
-    return generateProgressFallback(categoryType, categoryId, remainingMovies)
-  }
-}
-
-// Fallback recommendation when AI is not available
-function generateProgressFallback(categoryType: string, categoryId: string, remainingMovies: Movie[]): string {
-  const categoryName = categoryType === 'decade' 
-    ? (categoryId === '2000s' ? 'dekady 2000-2009' : categoryId === '2010s' ? 'dekady 2010-2019' : `dekady ${categoryId}`)
-    : `roku oscarowego ${categoryId}`
-
-  const count = remainingMovies.length
-  
-  if (count === 1) {
-    const movie = remainingMovies[0]
-    return `Ostatni film do ukończenia ${categoryName}! "${movie.title}" czeka na Ciebie - to ${movie.is_best_picture_winner ? 'zwycięzca' : 'nominowany'} Oscara z ${movie.year} roku. Jesteś już tak blisko celu! 🎬`
-  } else if (count <= 3) {
-    return `Zostały Ci tylko ${count} filmy do ukończenia ${categoryName}! Jesteś już bardzo blisko - każdy z pozostałych filmów to prawdziwa perełka kinematografii. Czas na finisz! 🏆`
-  } else if (count <= 5) {
-    const topMovie = remainingMovies.find(m => m.is_best_picture_winner) || remainingMovies[0]
-    return `Zostało ${count} filmów do ukończenia ${categoryName}. Polecam zacząć od "${topMovie.title}" - to ${topMovie.is_best_picture_winner ? 'zwycięzca' : 'nominowany'} Oscara, który na pewno Cię nie zawiedzie! 🎭`
-  } else {
-    const winner = remainingMovies.find(m => m.is_best_picture_winner)
-    const drama = remainingMovies.find(m => m.thematic_tags?.some(t => t.tag === 'Dramat'))
-    
-    if (winner && drama && winner.id !== drama.id) {
-      return `Zostało ${count} filmów do ukończenia ${categoryName}! Jeśli masz ochotę na coś pewnego, sięgnij po "${winner.title}", ale jeśli wolisz klasyczny dramat, polecam "${drama.title}". Każdy krok przybliża Cię do celu! 🌟`
-    } else if (winner) {
-      return `Zostało ${count} filmów do ukończenia ${categoryName}! Polecam zacząć od "${winner.title}" - zwycięzcy Oscara, który na pewno będzie świetnym wyborem. Jesteś na dobrej drodze! 🎬`
-    } else {
-      return `Zostało ${count} filmów do ukończenia ${categoryName}! Każdy z pozostałych filmów to nominowany do Oscara klasyk. Wybierz ten, który najbardziej Cię intryguje i kontynuuj swoją oscarową podróż! 🚀`
-    }
   }
 }
