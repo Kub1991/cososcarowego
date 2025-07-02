@@ -1073,13 +1073,6 @@ export async function getSelectionStats(): Promise<{
     }
 
     const totalMovies = movies.length;
-    // 🔍 DEBUG: Log the parameters being passed
-    console.log('📝 Supabase: Adding movie to list:', {
-      listId,
-      movieId,
-      notes: notes || 'No notes'
-    });
-    
     const neverSelected = movies.filter(m => m.last_selected_at === null).length;
     const recentlySelected = movies.filter(m => {
       if (!m.last_selected_at) return false;
@@ -1090,11 +1083,9 @@ export async function getSelectionStats(): Promise<{
     const selectedMovies = movies
       .filter(m => m.last_selected_at !== null)
       .map(m => new Date(m.last_selected_at!));
-      console.log('ℹ️ Supabase: Movie already in list, skipping insertion');
 
     const oldestSelection = selectedMovies.length > 0 
       ? new Date(Math.min(...selectedMovies.map(d => d.getTime()))).toISOString()
-    console.log('📝 Supabase: Movie not in list, inserting...');
 
       : null;
     
@@ -1106,23 +1097,18 @@ export async function getSelectionStats(): Promise<{
       totalMovies,
       neverSelected,
       recentlySelected,
-      console.error('❌ Supabase: Database error in addMovieToList:', error);
       oldestSelection,
       newestSelection
     };
-    console.log('✅ Supabase: Successfully inserted movie into list');
   } catch (error) {
     console.error('Error in getSelectionStats:', error);
     return null;
-    console.error('❌ Supabase: Exception in addMovieToList:', error);
   }
 }
 
 // Browse by Years functions
 
 // Get all available Oscar years
-    console.log('📋 Supabase: Getting/creating default list:', { userId, listName });
-    
 export async function getAvailableOscarYears(): Promise<number[]> {
   try {
     const { data, error } = await supabase
@@ -1134,17 +1120,14 @@ export async function getAvailableOscarYears(): Promise<number[]> {
 
     if (error || !data) {
       console.error('Error fetching Oscar years:', error);
-      console.error('❌ Supabase: Error finding default list:', findError);
       return [];
     }
 
     // Get unique years
     const uniqueYears = [...new Set(data.map(movie => movie.oscar_year))].filter(year => year !== null) as number[];
-      console.log('✅ Supabase: Found existing list with ID:', existingList.id);
     return uniqueYears.sort((a, b) => a - b);
   } catch (error) {
     console.error('Error in getAvailableOscarYears:', error);
-    console.log('📝 Supabase: List not found, creating new one...');
 
     return [];
   }
@@ -1163,15 +1146,12 @@ export async function getBestPictureWinner(oscarYear: number): Promise<Movie | n
 
     if (error || !data) {
       console.error('Error fetching Best Picture winner:', error);
-      console.error('❌ Supabase: Error creating default list:', createError);
       return null;
     }
 
-    console.log('✅ Supabase: Created new list with ID:', newList.id);
     return data;
   } catch (error) {
     console.error('Error in getBestPictureWinner:', error);
-    console.error('❌ Supabase: Exception in getOrCreateDefaultListId:', error);
     return null;
   }
 }
