@@ -130,6 +130,9 @@ function App() {
           onBack={handleBackToMain}
           onLogout={handleLogout}
           initialTab={dashboardInitialTab}
+          onQuickShot={handleQuickShotClick}
+          onSmartMatch={handleSmartMatchClick}
+          onBrowseByYears={handleBrowseByYearsClick}
         />
       </Suspense>
     );
