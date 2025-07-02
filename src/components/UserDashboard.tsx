@@ -517,9 +517,10 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                         <Target className="w-6 h-6 text-[#DFBD69]" />
                         <span className="text-white font-semibold whitespace-nowrap overflow-hidden text-ellipsis">Osiągnięcia</span>
                       </div>
-                      <p className="text-4xl font-bold text-[#DFBD69] text-center">
+                      <p className="text-3xl font-bold text-[#DFBD69] text-center">
                         {userAchievements?.length || 0}
                       </p>
+                      <p className="text-neutral-400 text-sm">zdobytych</p>
                     </div>
                   </div>
                 </div>
