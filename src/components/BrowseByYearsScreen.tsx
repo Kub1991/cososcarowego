@@ -332,6 +332,21 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
                 </div>
               </div>
 
+              {/* Scroll Hint Visualization */}
+              <div className="flex items-center justify-center my-8 px-6">
+                <div className="flex items-center">
+                  <div className="w-2 h-2 rounded-full bg-[#DFBD69]"></div>
+                  <div className="w-16 h-px bg-gradient-to-r from-[#DFBD69] to-[#DFBD69]/30"></div>
+                  <div className="text-[#DFBD69] font-medium mx-2">Przewiń</div>
+                  <div className="w-16 h-px bg-gradient-to-r from-[#DFBD69]/30 to-[#DFBD69]"></div>
+                  <div className="flex items-center">
+                    <div className="w-2 h-2 rounded-full bg-[#DFBD69]"></div>
+                    <div className="w-3 h-3 border-t-2 border-r-2 border-[#DFBD69] transform rotate-45 ml-1"></div>
+                  </div>
+                </div>
+              </div>
+
+
               {/* Year Slider */}
               <div className="mb-12 px-6">
                 <div className="relative">
@@ -687,20 +702,6 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
               </div>
             </div>
 
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Helper function to parse brief text into sections - IDENTICAL to QuickShotScreen and SmartMatchScreen
-const parseBriefSections = (briefText: string) => {
-  if (!briefText) return [];
-  
-  // Split by lines and process
-  const lines = briefText.split('\n');
-  const sections = [];
-  let currentSection = { title: '', content: '' };
   
   for (const line of lines) {
     // Check if line is a header (starts with emoji and has ** around text)
