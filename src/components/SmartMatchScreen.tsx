@@ -95,34 +95,30 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
     }
   ];
 
-  // UPDATED: Popularity options without icons
+  // UPDATED: Popularity options without icons and percentage details
   const popularityOptions = [
     { 
       id: 'blockbuster', 
       label: 'Bardzo znany film', 
       description: 'Popularne hity, które zna każdy kinoman',
-      details: 'Top 25% najczęściej głosowanych filmów',
       threshold: 'high'
     },
     { 
       id: 'classic', 
       label: 'Popularny klasyk', 
       description: 'Uznane dzieła o średniej popularności',
-      details: 'Filmy o umiarkowanej liczbie głosów',
       threshold: 'medium'
     },
     { 
       id: 'hidden-gem', 
       label: 'Mniej znana perełka', 
       description: 'Niedocenione skarby kinematografii',
-      details: 'Bottom 25% - filmy dla prawdziwych odkrywców',
       threshold: 'low'
     },
     { 
       id: 'any', 
       label: 'Dowolna popularność', 
       description: 'Jestem otwarty na wszystko',
-      details: 'Pełny zakres od hitów po perełki',
       threshold: 'any'
     }
   ];
@@ -659,7 +655,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
             </div>
           )}
 
-          {/* NEW: Popularity Step - UPDATED: Removed icons */}
+          {/* NEW: Popularity Step - UPDATED: Removed icons and percentage details */}
           {currentStep === 'popularity' && (
             <div className="space-y-8">
               <div className="text-center space-y-4">
@@ -695,11 +691,8 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
                         <h3 className="text-white font-semibold text-lg mb-2">
                           {option.label}
                         </h3>
-                        <p className="text-neutral-400 text-sm leading-relaxed mb-2">
+                        <p className="text-neutral-400 text-sm leading-relaxed">
                           {option.description}
-                        </p>
-                        <p className="text-neutral-500 text-xs">
-                          📊 {option.details}
                         </p>
                       </div>
                       <div className="w-6 h-6 rounded-full border-2 border-neutral-500 group-hover:border-[#DFBD69] mt-1"></div>
@@ -1015,8 +1008,6 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
               )}
             </div>
           )}
-
-          {/* Explanation View */}
         </div>
       </div>
     </div>
