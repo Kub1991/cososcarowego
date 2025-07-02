@@ -3,6 +3,7 @@ import { ArrowLeft, Play, BookOpen, Check, ExternalLink, X } from 'lucide-react'
 import { getRandomOscarMovie, getMovieRecommendation, getOscarNominees, addMovieToWatchlist, markMovieAsWatched, Movie } from '../lib/supabase';
 import { supabase } from '../lib/supabase';
 import OptimizedImage from './OptimizedImage';
+import { formatThematicTags } from '../lib/utils';
 
 interface QuickShotScreenProps {
   onBack: () => void;
@@ -367,7 +368,7 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
                     
                     <div className="flex flex-wrap gap-4 text-sm text-neutral-300 mb-4">
                       <span>⏰ <strong>Czas:</strong> {currentMovie.runtime ? `${Math.floor(currentMovie.runtime / 60)}h ${currentMovie.runtime % 60}min` : 'Nieznany'}</span>
-                      <span>🎭 <strong>Gatunek:</strong> {currentMovie.genres?.join(', ') || 'Nieznany'}</span>
+                      <span>🎭 <strong>Gatunek:</strong> {formatThematicTags(currentMovie.thematic_tags)}</span>
                       <span>⭐ <strong>Ocena:</strong> {currentMovie.vote_average ?`${currentMovie.vote_average}/10` : 'N/A'}</span>
                     </div>
 

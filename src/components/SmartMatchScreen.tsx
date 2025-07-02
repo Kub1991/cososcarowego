@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, Target, Play, BookOpen, Check, X } from 'lucide-react';
 import { getSmartMatchRecommendations, getMovieRecommendation, addMovieToWatchlist, markMovieAsWatched, UserPreferences, MovieRecommendation } from '../lib/supabase';
 import { supabase } from '../lib/supabase';
+import { formatThematicTags } from '../lib/utils';
 
 interface SmartMatchScreenProps {
   onBack: () => void;

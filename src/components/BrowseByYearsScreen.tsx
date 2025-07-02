@@ -12,6 +12,7 @@ import {
   DecadeStats
 } from '../lib/supabase';
 import { supabase } from '../lib/supabase';
+import { formatThematicTags } from '../lib/utils';
 
 interface BrowseByYearsScreenProps {
   onBack: () => void;
@@ -241,21 +242,6 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
     const hours = Math.floor(runtime / 60);
     const minutes = runtime % 60;
     return `${hours}h ${minutes}min`;
-  };
-
-  // NEW: Format thematic tags function
-  const formatThematicTags = (thematicTags: Array<{tag: string, importance: number}> | null | undefined) => {
-    if (!thematicTags || thematicTags.length === 0) {
-      return 'Dramat'; // Fallback
-    }
-    
-    // Sort by importance (highest first) and take top 3
-    const sortedTags = thematicTags
-      .sort((a, b) => (b.importance || 0) - (a.importance || 0))
-      .slice(0, 3)
-      .map(tagObj => tagObj.tag);
-    
-    return sortedTags.join(', ');
   };
 
   // Get nominees excluding the winner for display

@@ -823,7 +823,7 @@ async function generateExpectationText(movie: any): Promise<string> {
 Informacje o filmie:
 - Tytuł: ${movie.title}
 - Rok: ${movie.year}
-- Gatunki: ${movie.genres?.join(', ') || 'Nieznane'}
+- Gatunki: ${movie.thematic_tags?.map(t => t.tag).join(', ') || 'Nieznane'}
 - Opis: ${movie.overview || 'Brak opisu'}
 - Status Oscar: ${movie.is_best_picture_winner ? 'Zwycięzca' : 'Nominowany'} w kategorii Najlepszy Film (${movie.oscar_year})
 - Ocena: ${movie.vote_average}/10
@@ -885,7 +885,7 @@ async function generateExplanation(movie: any, userPreferences?: any): Promise<s
     Informacje o filmie:
     - Tytuł: ${movie.title}
     - Rok: ${movie.year}
-    - Gatunki: ${movie.genres?.join(', ') || 'Nieznane'}
+    - Gatunki: ${movie.thematic_tags?.map(t => t.tag).join(', ') || 'Nieznane'}
     - Status Oscar: ${movie.is_best_picture_winner ? 'Zwycięzca' : 'Nominowany'} (${movie.oscar_year})
     - Ocena: ${movie.vote_average}/10
     - Długość: ${movie.runtime} min
@@ -941,7 +941,7 @@ Informacje o filmie:
 - Tytuł: ${movie.title}
 - Oryginalny tytuł: ${movie.original_title || movie.title}
 - Rok: ${movie.year}
-- Gatunki: ${movie.genres?.join(', ') || 'Drama'}
+- Gatunki: ${movie.thematic_tags?.map(t => t.tag).join(', ') || 'Drama'}
 - Podstawowy opis: ${movie.overview || 'Brak opisu'}
 - Status Oscar: ${movie.is_best_picture_winner ? 'Zwycięzca Najlepszy Film' : 'Nominowany Najlepszy Film'} (ceremonii ${movie.oscar_year})
 - Ocena: ${movie.vote_average || 'N/A'}/10
