@@ -193,24 +193,21 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                 disabled={!onQuickShot}
                 className="flex-shrink-0 px-3 md:px-4 py-2 text-black font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap bg-[#DFBD69] hover:bg-[#E8C573]"
               >
-                <span className="hidden sm:inline">Szybki strzał</span>
-                <span className="sm:hidden">Szybki</span>
+                Szybki strzał
               </button>
               <button
                 onClick={onSmartMatch}
                 disabled={!onSmartMatch}
                 className="flex-shrink-0 px-3 md:px-4 py-2 text-black font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap bg-[#DFBD69] hover:bg-[#E8C573]"
               >
-                <span className="hidden sm:inline">Dopasowany wybór</span>
-                <span className="sm:hidden">Dopasowany</span>
+                Dopasowany wybór
               </button>
               <button
                 onClick={onBrowseByYears}
                 disabled={!onBrowseByYears}
                 className="flex-shrink-0 px-3 md:px-4 py-2 text-black font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap bg-[#DFBD69] hover:bg-[#E8C573]"
               >
-                <span className="hidden sm:inline">Przeszukaj latami</span>
-                <span className="sm:hidden">Lata</span>
+                Przeszukaj latami
               </button>
             </div>
           </div>
