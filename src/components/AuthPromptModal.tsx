@@ -164,48 +164,53 @@ const AuthPromptModal: React.FC<AuthPromptModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="relative w-full max-w-md mx-auto bg-[#1a1c1e] rounded-2xl border border-neutral-700 overflow-hidden">
+      <div className="relative w-full max-w-4xl mx-auto overflow-hidden">
         {/* Close Button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 z-10 p-2 text-neutral-400 hover:text-white transition-colors"
+          className="absolute top-6 right-6 z-10 p-2 text-neutral-400 hover:text-white transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
-        {/* Header */}
+        {/* Main Content Container */}
         <div 
-          className="p-8 text-center"
+          className="p-8 md:p-12 md:rounded-2xl md:border md:border-neutral-700"
           style={{
-            background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
+            background: '#0a0a0a',
           }}
         >
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#DFBD69]/20 flex items-center justify-center">
-            <Star className="w-8 h-8 text-[#DFBD69]" />
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#DFBD69]/20 flex items-center justify-center">
+              <Star className="w-8 h-8 text-[#DFBD69]" />
+            </div>
+            
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+              {showLogin ? 'Zaloguj się do konta' : showRegister ? 'Utwórz nowe konto' : 'Rozpocznij swoją Oscarową podróż!'}
+            </h2>
+            <p className="text-neutral-300">
+              {showLogin 
+                ? 'Wprowadź swoje dane logowania' 
+                : showRegister
+                ? 'Wypełnij formularz, aby utworzyć konto'
+                : `Aby korzystać z ${featureName}, utwórz darmowe konto i odkryj pełnię możliwości naszej platformy.`
+              }
+            </p>
           </div>
-          
-          <h2 className="text-xl font-bold text-white mb-2">
-            {showLogin ? 'Zaloguj się do konta' : showRegister ? 'Utwórz nowe konto' : 'Rozpocznij swoją Oscarową podróż!'}
-          </h2>
-          <p className="text-neutral-300 text-sm">
-            {showLogin 
-              ? 'Wprowadź swoje dane logowania' 
-              : showRegister
-              ? 'Wypełnij formularz, aby utworzyć konto'
-              : `Aby korzystać z ${featureName}, utwórz darmowe konto i odkryj pełnię możliwości naszej platformy.`
-            }
-          </p>
-        </div>
 
-        {/* Content */}
-        <div className="p-6">
           {!showLogin && !showRegister ? (
             // Registration/Benefits View
             <>
               {/* Benefits */}
-              <div className="space-y-4 mb-6">
+              <div className="space-y-4 mb-8">
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-neutral-800/50">
+                  <div 
+                    className="flex items-center gap-3 p-4 rounded-lg border border-neutral-700"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
+                    }}
+                  >
                     <Heart className="w-5 h-5 text-[#DFBD69] flex-shrink-0" />
                     <div>
                       <h4 className="text-white font-medium text-sm">Osobiste listy filmów</h4>
@@ -213,7 +218,12 @@ const AuthPromptModal: React.FC<AuthPromptModalProps> = ({
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-neutral-800/50">
+                  <div 
+                    className="flex items-center gap-3 p-4 rounded-lg border border-neutral-700"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
+                    }}
+                  >
                     <TrendingUp className="w-5 h-5 text-[#DFBD69] flex-shrink-0" />
                     <div>
                       <h4 className="text-white font-medium text-sm">Śledź swój postęp</h4>
@@ -221,7 +231,12 @@ const AuthPromptModal: React.FC<AuthPromptModalProps> = ({
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-neutral-800/50">
+                  <div 
+                    className="flex items-center gap-3 p-4 rounded-lg border border-neutral-700"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
+                    }}
+                  >
                     <Star className="w-5 h-5 text-[#DFBD69] flex-shrink-0" />
                     <div>
                       <h4 className="text-white font-medium text-sm">Spersonalizowane rekomendacje</h4>
@@ -232,7 +247,7 @@ const AuthPromptModal: React.FC<AuthPromptModalProps> = ({
               </div>
 
               {/* Action Buttons */}
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <button
                   onClick={() => setShowRegister(true)}
                   className="w-full bg-[#DFBD69] text-black font-semibold py-3 px-6 rounded-lg hover:bg-[#E8C573] transition-colors"
@@ -259,13 +274,13 @@ const AuthPromptModal: React.FC<AuthPromptModalProps> = ({
             // Login Form View
             <>
               {error && (
-                <div className="mb-6 p-4 bg-red-600/20 border border-red-600/30 rounded-lg flex items-start gap-3">
+                <div className="mb-8 p-4 bg-red-600/20 border border-red-600/30 rounded-lg flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                   <p className="text-red-400 text-sm">{error}</p>
                 </div>
               )}
               
-              <form onSubmit={handleLogin} className="space-y-6">
+              <form onSubmit={handleLogin} className="space-y-8">
                 <div>
                   <label htmlFor="login-email" className="block text-sm font-medium text-white mb-3">
                     Adres email
@@ -327,7 +342,7 @@ const AuthPromptModal: React.FC<AuthPromptModalProps> = ({
               </form>
 
               {/* Back to Registration */}
-              <div className="mt-6 text-center">
+              <div className="mt-8 text-center">
                 <button
                   onClick={() => setShowLogin(false)}
                   className="text-neutral-400 hover:text-[#DFBD69] transition-colors text-sm"
@@ -340,13 +355,13 @@ const AuthPromptModal: React.FC<AuthPromptModalProps> = ({
             // Registration Form View
             <>
               {error && (
-                <div className="mb-6 p-4 bg-red-600/20 border border-red-600/30 rounded-lg flex items-start gap-3">
+                <div className="mb-8 p-4 bg-red-600/20 border border-red-600/30 rounded-lg flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                   <p className="text-red-400 text-sm">{error}</p>
                 </div>
               )}
               
-              <form onSubmit={handleRegister} className="space-y-6">
+              <form onSubmit={handleRegister} className="space-y-8">
                 <div>
                   <label htmlFor="register-fullname" className="block text-sm font-medium text-white mb-3">
                     Imię i nazwisko
@@ -451,7 +466,7 @@ const AuthPromptModal: React.FC<AuthPromptModalProps> = ({
               </form>
 
               {/* Back to Login */}
-              <div className="mt-6 text-center">
+              <div className="mt-8 text-center">
                 <button
                   onClick={() => {
                     setShowRegister(false);
@@ -464,7 +479,7 @@ const AuthPromptModal: React.FC<AuthPromptModalProps> = ({
               </div>
               
               {/* Back to Benefits */}
-              <div className="mt-2 text-center">
+              <div className="mt-4 text-center">
                 <button
                   onClick={() => {
                     setShowRegister(false);
@@ -479,7 +494,7 @@ const AuthPromptModal: React.FC<AuthPromptModalProps> = ({
           )}
 
           {/* Footer Note */}
-          <p className="text-neutral-500 text-xs text-center pt-6">
+          <p className="text-neutral-500 text-xs text-center pt-8">
             Darmowe na zawsze • Bez ukrytych opłat • Anuluj w każdej chwili
           </p>
         </div>
