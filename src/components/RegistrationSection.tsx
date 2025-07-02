@@ -140,10 +140,21 @@ const RegistrationSection: React.FC<RegistrationSectionProps> = ({ onRegistratio
   return (
     <section className="py-12 md:pt-8 md:pb-20 bg-[#070000]">
       <div className="max-w-6xl mx-auto px-6">
+        
+        {/* Mobile Header - Only visible on mobile */}
+        <div className="text-center mb-8 md:hidden">
+          <h2 className="text-2xl font-bold text-white mb-4">
+            Rozpocznij swoją <span className="text-[#DFBD69]">Oscarową podróż</span>
+          </h2>
+          <p className="text-neutral-400 text-base leading-relaxed">
+            Dołącz do tysięcy miłośników kina i odkrywaj najlepsze filmy w historii
+          </p>
+        </div>
+        
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           
-          {/* Left Side - UVP and Benefits */}
-          <div className="space-y-6 lg:space-y-8 order-2 lg:order-1">
+          {/* Left Side - UVP and Benefits - Hidden on mobile */}
+          <div className="hidden md:block space-y-6 lg:space-y-8 order-2 lg:order-1">
             <div>
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">
                 Rozpocznij swoją <span className="text-[#DFBD69]">Oscarową podróż</span>
@@ -200,15 +211,16 @@ const RegistrationSection: React.FC<RegistrationSectionProps> = ({ onRegistratio
             </div>
           </div>
 
-          {/* Right Side - Registration Form */}
-          <div className="order-1 lg:order-2">
+          {/* Registration Form - Full width on mobile */}
+          <div className="order-1 lg:order-2 lg:col-span-1 md:col-span-1">
             <div 
               className="p-6 lg:p-8 rounded-xl lg:rounded-2xl border border-neutral-700"
               style={{
                 background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
               }}
             >
-              <div className="text-center mb-6 lg:mb-8">
+              {/* Form header - different styling for mobile vs desktop */}
+              <div className="text-center mb-6 lg:mb-8 md:block hidden">
                 <div className="w-10 h-10 lg:w-12 lg:h-12 mx-auto mb-3 lg:mb-4 rounded-full bg-[#DFBD69]/20 flex items-center justify-center">
                   <Star className="w-5 h-5 lg:w-6 lg:h-6 text-[#DFBD69]" />
                 </div>
@@ -218,6 +230,13 @@ const RegistrationSection: React.FC<RegistrationSectionProps> = ({ onRegistratio
                 <p className="text-neutral-300 text-sm">
                   Zacznij odkrywać najlepsze filmy w historii kina
                 </p>
+              </div>
+              
+              {/* Mobile form header - simpler */}
+              <div className="text-center mb-6 md:hidden">
+                <h3 className="text-lg font-bold text-white mb-2">
+                  Utwórz darmowe konto
+                </h3>
               </div>
 
               {error && (
@@ -334,6 +353,22 @@ const RegistrationSection: React.FC<RegistrationSectionProps> = ({ onRegistratio
               <p className="text-neutral-500 text-xs text-center mt-4 lg:mt-6">
                 Darmowe na zawsze • Bez ukrytych opłat • Anuluj w każdej chwili
               </p>
+              
+              {/* Mobile trust indicators - shown below form */}
+              <div className="flex flex-wrap items-center justify-center gap-4 pt-4 mt-6 border-t border-neutral-700 md:hidden">
+                <div className="flex items-center gap-1">
+                  <span className="text-white font-semibold text-sm">10,000+</span>
+                  <span className="text-neutral-400 text-xs">użytkowników</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-white font-semibold text-sm">145</span>
+                  <span className="text-neutral-400 text-xs">filmów</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-white font-semibold text-sm">95</span>
+                  <span className="text-neutral-400 text-xs">lat historii</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
