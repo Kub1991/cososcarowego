@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, LogOut, User as UserIcon, Heart, TrendingUp, Target, Film, Check, Shuffle, FileText, Clock } from 'lucide-react';
-import { getUserProfile, getUserStats, getWatchlistMovies, markMovieAsWatched, UserProfile, UserStats, UserWatchlistItem } from '../lib/supabase';
+import { getUserProfile, getUserStats, getWatchlistMovies, getUserOscarProgress, markMovieAsWatched, UserProfile, UserStats, UserWatchlistItem, UserOscarProgress, OscarProgressSummary } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
 interface UserDashboardProps {
@@ -28,6 +28,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [watchlistMovies, setWatchlistMovies] = useState<UserWatchlistItem[]>([]);
+  const [oscarProgress, setOscarProgress] = useState<OscarProgressSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionFeedback, setActionFeedback] = useState<{type: 'success' | 'error', message: string} | null>(null);
@@ -51,15 +52,17 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
       setIsLoading(true);
       setError(null);
 
-      const [profile, stats, watchlist] = await Promise.all([
+      const [profile, stats, watchlist, progress] = await Promise.all([
         getUserProfile(user.id),
         getUserStats(user.id),
-        getWatchlistMovies(user.id)
+        getWatchlistMovies(user.id),
+        getUserOscarProgress(user.id)
       ]);
 
       setUserProfile(profile);
       setUserStats(stats);
       setWatchlistMovies(watchlist);
+      setOscarProgress(progress);
 
     } catch (error) {
       console.error('Error loading user data:', error);
@@ -78,7 +81,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
         console.log('✅ Dashboard: Successfully marked movie as watched');
         setActionFeedback({ type: 'success', message: `"${movieTitle}" oznaczono jako obejrzany!` });
         
-        // Refresh the watchlist to remove the movie
+        // Refresh the data to show updated progress
         await loadUserData();
       } else {
         console.error('❌ Dashboard: Failed to mark movie as watched');
@@ -107,6 +110,22 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
       return user.email.split('@')[0];
     }
     return 'Użytkownik';
+  };
+
+  const getDecadeDisplayName = (decadeId: string) => {
+    const decadeNames: { [key: string]: string } = {
+      '2000s': 'Lata 2000-2009',
+      '2010s': 'Lata 2010-2019',
+      '1990s': 'Lata 1990-1999',
+      '1980s': 'Lata 1980-1989',
+      '1970s': 'Lata 1970-1979',
+      '1960s': 'Lata 1960-1969',
+      '1950s': 'Lata 1950-1959',
+      '1940s': 'Lata 1940-1949',
+      '1930s': 'Lata 1930-1939',
+      '1920s': 'Lata 1920-1929'
+    };
+    return decadeNames[decadeId] || decadeId;
   };
 
   const tabs = [
@@ -412,23 +431,132 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
               </div>
             )}
 
-            {/* Journey Tab */}
+            {/* Journey Tab - NEW: Oscar Progress Tracking */}
             {activeTab === 'journey' && (
               <div className="space-y-8">
                 <div>
                   <h2 className="text-2xl font-bold text-white mb-6">Moja podróż</h2>
-                  <div 
-                    className="p-8 rounded-xl border border-neutral-700 text-center"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
-                    }}
-                  >
-                    <TrendingUp className="w-12 h-12 text-[#DFBD69] mx-auto mb-4" />
-                    <h3 className="text-white font-semibold text-lg mb-2">Śledź swoją podróż</h3>
-                    <p className="text-neutral-400">
-                      Ta sekcja będzie dostępna wkrótce. Tutaj będziesz mógł śledzić swój postęp w odkrywaniu filmów oscarowych.
-                    </p>
-                  </div>
+                  
+                  {oscarProgress && (oscarProgress.decades.length > 0 || oscarProgress.years.length > 0) ? (
+                    <div className="space-y-8">
+                      {/* Overall Progress */}
+                      <div 
+                        className="p-6 rounded-xl border border-neutral-700"
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
+                        }}
+                      >
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-white font-semibold text-lg">Ogólny postęp</h3>
+                          <span className="text-[#DFBD69] font-bold text-2xl">
+                            {oscarProgress.overallProgress}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-neutral-700 rounded-full h-3 mb-2">
+                          <div 
+                            className="bg-gradient-to-r from-[#DFBD69] to-[#E8C573] h-3 rounded-full transition-all duration-500"
+                            style={{ width: `${oscarProgress.overallProgress}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-neutral-300 text-sm">
+                          {oscarProgress.totalWatchedMovies} z {oscarProgress.totalOscarMovies} filmów oscarowych obejrzanych
+                        </p>
+                      </div>
+
+                      {/* Decade Progress */}
+                      {oscarProgress.decades.length > 0 && (
+                        <div>
+                          <h3 className="text-white font-semibold text-lg mb-4">Postęp według dekad</h3>
+                          <div className="space-y-4">
+                            {oscarProgress.decades.map((decade) => (
+                              <div 
+                                key={decade.id}
+                                className="p-4 rounded-lg border border-neutral-700 bg-neutral-800/50"
+                              >
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-white font-medium">
+                                    {getDecadeDisplayName(decade.category_identifier)}
+                                  </span>
+                                  <span className="text-[#DFBD69] font-semibold">
+                                    {decade.progress_percentage}%
+                                  </span>
+                                </div>
+                                <div className="w-full bg-neutral-700 rounded-full h-2 mb-2">
+                                  <div 
+                                    className="bg-[#DFBD69] h-2 rounded-full transition-all duration-500"
+                                    style={{ width: `${decade.progress_percentage}%` }}
+                                  ></div>
+                                </div>
+                                <p className="text-neutral-400 text-xs">
+                                  {decade.movies_watched_count} z {decade.total_movies_in_category} filmów ukończonych
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Recent Years Progress */}
+                      {oscarProgress.years.length > 0 && (
+                        <div>
+                          <h3 className="text-white font-semibold text-lg mb-4">Ostatnie lata Oscarów</h3>
+                          <div className="grid md:grid-cols-2 gap-4">
+                            {oscarProgress.years.map((year) => (
+                              <div 
+                                key={year.id}
+                                className="p-4 rounded-lg border border-neutral-700 bg-neutral-800/50"
+                              >
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-white font-medium">
+                                    Oscary {year.category_identifier}
+                                  </span>
+                                  <span className="text-[#DFBD69] font-semibold">
+                                    {year.progress_percentage}%
+                                  </span>
+                                </div>
+                                <div className="w-full bg-neutral-700 rounded-full h-2 mb-2">
+                                  <div 
+                                    className="bg-[#DFBD69] h-2 rounded-full transition-all duration-500"
+                                    style={{ width: `${year.progress_percentage}%` }}
+                                  ></div>
+                                </div>
+                                <p className="text-neutral-400 text-xs">
+                                  {year.movies_watched_count} z {year.total_movies_in_category} nominowanych obejrzanych
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div 
+                      className="p-8 rounded-xl border border-neutral-700 text-center"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
+                      }}
+                    >
+                      <TrendingUp className="w-12 h-12 text-[#DFBD69] mx-auto mb-4" />
+                      <h3 className="text-white font-semibold text-lg mb-2">Rozpocznij swoją podróż</h3>
+                      <p className="text-neutral-400 mb-4">
+                        Oznacz swój pierwszy film jako obejrzany, aby zobaczyć postęp w odkrywaniu filmów oscarowych.
+                      </p>
+                      <div className="flex flex-wrap justify-center gap-2">
+                        <button
+                          onClick={onQuickShot}
+                          className="px-4 py-2 bg-[#DFBD69] text-black font-semibold rounded-lg hover:bg-[#E8C573] transition-colors text-sm"
+                        >
+                          Szybki strzał
+                        </button>
+                        <button
+                          onClick={onSmartMatch}
+                          className="px-4 py-2 bg-neutral-700 text-white font-semibold rounded-lg hover:bg-neutral-600 transition-colors text-sm"
+                        >
+                          Dopasowany wybór
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

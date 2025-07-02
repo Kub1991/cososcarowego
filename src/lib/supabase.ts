@@ -89,6 +89,27 @@ export interface UserStats {
   total_nominees: number;
 }
 
+// NEW: Oscar Progress Tracking Types
+export interface UserOscarProgress {
+  id: string;
+  user_id: string;
+  category_type: 'decade' | 'oscar_year';
+  category_identifier: string; // e.g., '2010s' or '2017'
+  movies_watched_count: number;
+  total_movies_in_category: number;
+  progress_percentage: number;
+  last_updated: string;
+  created_at: string;
+}
+
+export interface OscarProgressSummary {
+  decades: UserOscarProgress[];
+  years: UserOscarProgress[];
+  totalWatchedMovies: number;
+  totalOscarMovies: number;
+  overallProgress: number;
+}
+
 // NEW: Enhanced Kino DNA Analysis Types with Weighted Support
 export interface GenreAnalysis {
   genre: string;
@@ -326,6 +347,97 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
   } catch (error) {
     console.error('Error in getUserProfile:', error);
     return null;
+  }
+}
+
+// NEW: Oscar Progress Functions
+export async function getUserOscarProgress(userId: string): Promise<OscarProgressSummary | null> {
+  try {
+    const { data: progressData, error } = await supabase
+      .from('user_oscar_progress')
+      .select('*')
+      .eq('user_id', userId)
+      .order('category_type', { ascending: true })
+      .order('category_identifier', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching Oscar progress:', error);
+      return null;
+    }
+
+    if (!progressData || progressData.length === 0) {
+      return {
+        decades: [],
+        years: [],
+        totalWatchedMovies: 0,
+        totalOscarMovies: 0,
+        overallProgress: 0
+      };
+    }
+
+    // Separate decades and years
+    const decades = progressData.filter(p => p.category_type === 'decade');
+    const years = progressData.filter(p => p.category_type === 'oscar_year');
+
+    // Calculate overall progress
+    const totalWatchedMovies = await getTotalWatchedOscarMovies(userId);
+    const totalOscarMovies = await getTotalOscarMovies();
+    const overallProgress = totalOscarMovies > 0 ? Math.round((totalWatchedMovies / totalOscarMovies) * 100) : 0;
+
+    return {
+      decades,
+      years: years.slice(0, 10), // Show only top 10 most recent years
+      totalWatchedMovies,
+      totalOscarMovies,
+      overallProgress
+    };
+  } catch (error) {
+    console.error('Error in getUserOscarProgress:', error);
+    return null;
+  }
+}
+
+async function getTotalWatchedOscarMovies(userId: string): Promise<number> {
+  try {
+    const { count, error } = await supabase
+      .from('user_movie_watches')
+      .select('movie_id', { count: 'exact' })
+      .eq('user_id', userId)
+      .in('movie_id', 
+        supabase
+          .from('movies')
+          .select('id')
+          .eq('is_best_picture_nominee', true)
+      );
+
+    if (error) {
+      console.error('Error counting watched Oscar movies:', error);
+      return 0;
+    }
+
+    return count || 0;
+  } catch (error) {
+    console.error('Error in getTotalWatchedOscarMovies:', error);
+    return 0;
+  }
+}
+
+async function getTotalOscarMovies(): Promise<number> {
+  try {
+    const { count, error } = await supabase
+      .from('movies')
+      .select('*', { count: 'exact' })
+      .eq('is_best_picture_nominee', true);
+
+    if (error) {
+      console.error('Error counting total Oscar movies:', error);
+      return 0;
+    }
+
+    return count || 0;
+  } catch (error) {
+    console.error('Error in getTotalOscarMovies:', error);
+    return 0;
   }
 }
 
@@ -626,6 +738,7 @@ export async function markMovieAsWatched(userId: string, movieId: string, rating
     console.log('✅ Supabase: Successfully marked movie as watched');
     
     // Update user stats and Kino DNA (now with weighted analysis)
+    // NOTE: Oscar progress is automatically updated by the database trigger
     await Promise.all([
       updateUserStats(userId),
       removeMovieFromWatchlist(userId, movieId), // Remove from watchlist when marked as watched
