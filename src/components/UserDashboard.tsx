@@ -184,6 +184,33 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
               <span className="text-sm font-medium">Wyloguj</span>
             </button>
           </div>
+          
+          {/* Discovery Buttons - Always visible at top */}
+          <div className="mt-6 pt-6 border-t border-neutral-600">
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={onQuickShot}
+                disabled={!onQuickShot}
+                className="px-4 py-2 bg-[#DFBD69] text-black font-semibold rounded-lg hover:bg-[#E8C573] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              >
+                Szybki strzał
+              </button>
+              <button
+                onClick={onSmartMatch}
+                disabled={!onSmartMatch}
+                className="px-4 py-2 bg-[#DFBD69] text-black font-semibold rounded-lg hover:bg-[#E8C573] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              >
+                Dopasowany wybór
+              </button>
+              <button
+                onClick={onBrowseByYears}
+                disabled={!onBrowseByYears}
+                className="px-4 py-2 bg-[#DFBD69] text-black font-semibold rounded-lg hover:bg-[#E8C573] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              >
+                Przeszukaj latami
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -296,34 +323,6 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                     </div>
                   </div>
                 </div>
-                  {/* Discovery Tiles */}
-                  <div className="mb-8">
-                    <div className="mb-8">
-                      <div className="flex flex-wrap gap-3">
-                        <button
-                          onClick={onQuickShot}
-                          disabled={!onQuickShot}
-                          className="px-4 py-2 bg-[#DFBD69] text-black font-semibold rounded-lg hover:bg-[#E8C573] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                        >
-                          Szybki strzał
-                        </button>
-                        <button
-                          onClick={onSmartMatch}
-                          disabled={!onSmartMatch}
-                          className="px-4 py-2 bg-[#DFBD69] text-black font-semibold rounded-lg hover:bg-[#E8C573] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                        >
-                          Dopasowany wybór
-                        </button>
-                        <button
-                          onClick={onBrowseByYears}
-                          disabled={!onBrowseByYears}
-                          className="px-4 py-2 bg-[#DFBD69] text-black font-semibold rounded-lg hover:bg-[#E8C573] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                        >
-                          Przeszukaj latami
-                        </button>
-                      </div>
-                    </div>
-                  </div>
               </div>
             )}
 
