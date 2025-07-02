@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, ChevronLeft, ChevronRight, Play, BookOpen, Trophy, Check, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Play, BookOpen, Trophy, Check, ChevronDown, ChevronUp, X, TrendingUp } from 'lucide-react';
 import { 
   getAvailableOscarYears, 
   getBestPictureWinner, 
@@ -18,11 +18,12 @@ interface BrowseByYearsScreenProps {
   onBack: () => void;
   isAuthenticated: boolean;
   onAuthPrompt: (featureName: string) => void;
+  onGoToJourney: () => void;
 }
 
 type ViewMode = 'timeline' | 'brief';
 
-const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAuthenticated, onAuthPrompt }) => {
+const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAuthenticated, onAuthPrompt, onGoToJourney }) => {
   const [availableYears, setAvailableYears] = useState<number[]>([]);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [currentMovie, setCurrentMovie] = useState<Movie | null>(null);
@@ -469,6 +470,14 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
                             >
                               <BookOpen className="w-5 h-5" />
                               5-min Brief
+                            </button>
+                            
+                            <button 
+                              onClick={onGoToJourney}
+                              className="w-full bg-neutral-700 text-white font-semibold py-4 px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm mt-4"
+                            >
+                              <TrendingUp className="w-5 h-5" />
+                              Moja droga
                             </button>
                             
                             <div className="grid grid-cols-2 gap-4">
