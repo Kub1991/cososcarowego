@@ -465,7 +465,7 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
                           <div className="space-y-4">
                             <button 
                               onClick={handleBriefClick}
-                              className="w-full bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] font-semibold py-4 px-6 rounded-lg hover:from-[#DFBD69]/30 transition-all flex items-center justify-center gap-2"
+                              className="w-full bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] font-semibold py-4 px-6 rounded-lg hover:from-[#DFBD69]/30 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
                             >
                               <BookOpen className="w-5 h-5" />
                               5-min Brief
@@ -474,14 +474,14 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
                             <div className="grid grid-cols-2 gap-4">
                               <button 
                                 onClick={handleAddToList}
-                                className="bg-neutral-700 text-white font-semibold py-3 px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2"
+                                className="bg-neutral-700 text-white font-semibold py-3 px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
                               >
                                 <img src="/ulubione.png" alt="Dodaj do listy" className="w-4 h-4" />
                                 Do obejrzenia
                               </button>
                               <button 
                                 onClick={handleWatched}
-                                className="bg-neutral-700 text-white font-semibold py-3 px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2"
+                                className="bg-neutral-700 text-white font-semibold py-3 px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
                               >
                                 <Check className="w-4 h-4" />
                                 Obejrzałem
@@ -492,7 +492,7 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
                             {otherNominees.length > 0 && (
                               <button 
                                 onClick={handleNomineesToggle}
-                                className="w-full bg-neutral-700 text-white font-semibold py-3 px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 xl:hidden"
+                                className="w-full bg-neutral-700 text-white font-semibold py-3 px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 xl:hidden text-xs sm:text-sm"
                               >
                                 <Trophy className="w-4 h-4" />
                                 {showNominees ? 'Ukryj inne nominacje' : 'Inne nominacje'}
