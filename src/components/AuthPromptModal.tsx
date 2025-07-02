@@ -26,15 +26,6 @@ const AuthPromptModal: React.FC<AuthPromptModalProps> = ({
 
   if (!isOpen) return null;
 
-  const scrollToBucketList = () => {
-    onClose();
-    // Scroll to the bucket list section
-    const bucketListSection = document.querySelector('[data-section="bucket-list"]');
-    if (bucketListSection) {
-      bucketListSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   const handleLoginInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginData({
       ...loginData,
@@ -170,7 +161,7 @@ const AuthPromptModal: React.FC<AuthPromptModalProps> = ({
               {/* Action Buttons */}
               <div className="space-y-3">
                 <button
-                  onClick={scrollToBucketList}
+                  onClick={onClose}
                   className="w-full bg-[#DFBD69] text-black font-semibold py-3 px-6 rounded-lg hover:bg-[#E8C573] transition-colors"
                 >
                   Utwórz darmowe konto

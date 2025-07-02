@@ -3,7 +3,6 @@ import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import DiscoverySection from './components/DiscoverySection';
 import MoodSection from './components/MoodSection';
-import BucketListSection from './components/BucketListSection';
 import Footer from './components/Footer';
 import AuthPromptModal from './components/AuthPromptModal';
 import LoadingSkeleton from './components/LoadingSkeleton';
@@ -17,7 +16,7 @@ const BrowseByYearsScreen = React.lazy(() => import('./components/BrowseByYearsS
 const UserDashboard = React.lazy(() => import('./components/UserDashboard'));
 
 type ViewType = 'main' | 'quickShot' | 'smartMatch' | 'browseByYears' | 'dashboard';
-type DashboardTab = 'overview' | 'lists' | 'journey' | 'challenges' | 'analytics';
+type DashboardTab = 'overview' | 'watchlist' | 'journey' | 'challenges' | 'analytics';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('main');
@@ -228,11 +227,6 @@ function App() {
             }}
           ></div>
         </div>
-      </div>
-      <div data-section="bucket-list">
-        <BucketListSection 
-          isAuthenticated={isAuthenticated}
-        />
       </div>
       <Footer />
       

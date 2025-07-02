@@ -6,8 +6,7 @@ import {
   getAllNomineesForYear,
   getDecadeStats,
   getMovieRecommendation,
-  getOrCreateDefaultListId,
-  addMovieToList,
+  addMovieToWatchlist,
   markMovieAsWatched,
   Movie,
   DecadeStats
@@ -190,19 +189,12 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
         return;
       }
 
-      // Get or create "Do obejrzenia" list
-      const listId = await getOrCreateDefaultListId(user.id, 'Do obejrzenia');
-      if (!listId) {
-        setActionFeedback({ type: 'error', message: 'Nie udało się znaleźć listy' });
-        return;
-      }
-
-      // Add movie to list
-      const success = await addMovieToList(listId, currentMovie.id);
+      // Add movie to watchlist
+      const success = await addMovieToWatchlist(user.id, currentMovie.id);
       if (success) {
-        setActionFeedback({ type: 'success', message: `"${currentMovie.title}" dodano do listy!` });
+        setActionFeedback({ type: 'success', message: `"${currentMovie.title}" dodano do listy "Do obejrzenia"!` });
       } else {
-        setActionFeedback({ type: 'error', message: 'Nie udało się dodać filmu do listy' });
+        setActionFeedback({ type: 'error', message: 'Nie udało się dodać filmu do listy "Do obejrzenia"' });
       }
     } catch (error) {
       console.error('Error adding to list:', error);
@@ -499,7 +491,7 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
                                 className="bg-neutral-700 text-white font-semibold py-3 px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2"
                               >
                                 <img src="/ulubione.png" alt="Dodaj do listy" className="w-4 h-4" />
-                                Dodaj do listy
+                                Do obejrzenia
                               </button>
                               <button 
                                 onClick={handleWatched}

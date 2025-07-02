@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, LogOut, User as UserIcon, Heart, TrendingUp, Target, Film } from 'lucide-react';
-import { getUserProfile, getUserStats, getUserMovieLists, getMoviesInList, UserProfile, UserStats, UserMovieList } from '../lib/supabase';
+import { getUserProfile, getUserStats, getWatchlistMovies, UserProfile, UserStats, UserWatchlistItem } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
 interface UserDashboardProps {
   user: User;
   onBack: () => void;
   onLogout: () => void;
-  initialTab?: 'overview' | 'lists' | 'journey' | 'challenges';
+  initialTab?: 'overview' | 'watchlist' | 'journey' | 'challenges';
 }
 
-type DashboardTab = 'overview' | 'lists' | 'journey' | 'challenges';
+type DashboardTab = 'overview' | 'watchlist' | 'journey' | 'challenges';
 
 const UserDashboard: React.FC<UserDashboardProps> = ({ 
   user, 
@@ -21,8 +21,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   const [activeTab, setActiveTab] = useState<DashboardTab>(initialTab);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
-  const [movieLists, setMovieLists] = useState<UserMovieList[]>([]);
-  const [watchlistMovies, setWatchlistMovies] = useState<any[]>([]);
+  const [watchlistMovies, setWatchlistMovies] = useState<UserWatchlistItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,22 +34,15 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
       setIsLoading(true);
       setError(null);
 
-      const [profile, stats, lists] = await Promise.all([
+      const [profile, stats, watchlist] = await Promise.all([
         getUserProfile(user.id),
         getUserStats(user.id),
-        getUserMovieLists(user.id)
+        getWatchlistMovies(user.id)
       ]);
 
       setUserProfile(profile);
       setUserStats(stats);
-      setMovieLists(lists);
-
-      // Load movies from "Do obejrzenia" list
-      const watchlist = lists.find(list => list.name === 'Do obejrzenia');
-      if (watchlist) {
-        const movies = await getMoviesInList(watchlist.id);
-        setWatchlistMovies(movies);
-      }
+      setWatchlistMovies(watchlist);
 
     } catch (error) {
       console.error('Error loading user data:', error);
@@ -80,7 +72,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
 
   const tabs = [
     { id: 'overview', label: 'Przegląd', icon: UserIcon },
-    { id: 'lists', label: 'Moje listy filmów', icon: Heart },
+    { id: 'watchlist', label: 'Do obejrzenia', icon: Heart },
     { id: 'journey', label: 'Moja podróż', icon: TrendingUp },
     { id: 'challenges', label: 'Wyzwania', icon: Target }
   ];
@@ -201,10 +193,13 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                         background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
                       }}
                     >
-                      <div className="flex items-center gap-3 mb-2">
+                      <button 
+                        onClick={() => setActiveTab('watchlist')}
+                        className="flex items-center gap-3 mb-2 w-full text-left hover:opacity-80 transition-opacity"
+                      >
                         <Heart className="w-6 h-6 text-[#DFBD69]" />
                         <span className="text-white font-semibold whitespace-nowrap overflow-hidden text-ellipsis">Do obejrzenia</span>
-                      </div>
+                      </button>
                       <p className="text-2xl font-bold text-[#DFBD69]">
                         {userStats?.watchlist_movies || 0}
                       </p>
@@ -248,10 +243,10 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
             )}
 
             {/* Movie Lists Tab */}
-            {activeTab === 'lists' && (
+            {activeTab === 'watchlist' && (
               <div className="space-y-8">
                 <div>
-                  <h2 className="text-2xl font-bold text-white mb-6">Moje listy filmów</h2>
+                  <h2 className="text-2xl font-bold text-white mb-6">Do obejrzenia</h2>
                   
                   {watchlistMovies.length === 0 ? (
                     <div 
@@ -261,9 +256,9 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                       }}
                     >
                       <Heart className="w-12 h-12 text-[#DFBD69] mx-auto mb-4" />
-                      <h3 className="text-white font-semibold text-lg mb-2">Brak filmów na liście</h3>
+                      <h3 className="text-white font-semibold text-lg mb-2">Brak filmów do obejrzenia</h3>
                       <p className="text-neutral-400">
-                        Dodaj filmy do swojej listy używając przycisku "Dodaj do listy" w aplikacji
+                        Dodaj filmy do obejrzenia używając przycisku "Do obejrzenia" w aplikacji
                       </p>
                     </div>
                   ) : (
@@ -272,13 +267,13 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                         <div key={listMovie.id} className="group">
                           <div className="aspect-[2/3] mb-3 rounded-lg overflow-hidden bg-neutral-800">
                             <img 
-                              src={formatPosterUrl(listMovie.movie?.poster_path)}
-                              alt={`${listMovie.movie?.title} Poster`}
+                              src={formatPosterUrl(listMovie.movies?.poster_path)}
+                              alt={`${listMovie.movies?.title} Poster`}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                           </div>
                           <h3 className="text-white font-medium text-sm leading-tight">
-                            {listMovie.movie?.title}
+                            {listMovie.movies?.title}
                           </h3>
                         </div>
                       ))}
