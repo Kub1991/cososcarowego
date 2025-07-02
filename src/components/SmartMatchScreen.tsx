@@ -95,13 +95,12 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
     }
   ];
 
-  // NEW: Popularity options based on real TMDB vote count data
+  // UPDATED: Popularity options without icons
   const popularityOptions = [
     { 
       id: 'blockbuster', 
       label: 'Bardzo znany film', 
       description: 'Popularne hity, które zna każdy kinoman',
-      icon: '🔥',
       details: 'Top 25% najczęściej głosowanych filmów',
       threshold: 'high'
     },
@@ -109,7 +108,6 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
       id: 'classic', 
       label: 'Popularny klasyk', 
       description: 'Uznane dzieła o średniej popularności',
-      icon: '⭐',
       details: 'Filmy o umiarkowanej liczbie głosów',
       threshold: 'medium'
     },
@@ -117,7 +115,6 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
       id: 'hidden-gem', 
       label: 'Mniej znana perełka', 
       description: 'Niedocenione skarby kinematografii',
-      icon: '💎',
       details: 'Bottom 25% - filmy dla prawdziwych odkrywców',
       threshold: 'low'
     },
@@ -125,7 +122,6 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
       id: 'any', 
       label: 'Dowolna popularność', 
       description: 'Jestem otwarty na wszystko',
-      icon: '🎯',
       details: 'Pełny zakres od hitów po perełki',
       threshold: 'any'
     }
@@ -663,7 +659,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
             </div>
           )}
 
-          {/* NEW: Popularity Step */}
+          {/* NEW: Popularity Step - UPDATED: Removed icons */}
           {currentStep === 'popularity' && (
             <div className="space-y-8">
               <div className="text-center space-y-4">
@@ -694,8 +690,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
                     disabled={isLoading}
                     className="w-full p-6 bg-[#1a1c1e] rounded-lg border border-neutral-700 hover:border-[#DFBD69] transition-colors text-left group disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <div className="flex items-start gap-4">
-                      <span className="text-3xl mt-1">{option.icon}</span>
+                    <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className="text-white font-semibold text-lg mb-2">
                           {option.label}
@@ -1020,6 +1015,8 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
               )}
             </div>
           )}
+
+          {/* Explanation View */}
         </div>
       </div>
     </div>
