@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, LogOut, User as UserIcon, Heart, TrendingUp, Target, Film, Check, Shuffle, FileText, Clock } from 'lucide-react';
-import { getUserProfile, getUserStats, getWatchlistMovies, getUserOscarProgress, markMovieAsWatched, UserProfile, UserStats, UserWatchlistItem, UserOscarProgress, OscarProgressSummary } from '../lib/supabase';
-import type { User } from '@supabase/supabase-js';
+import { ArrowLeft, LogOut, User as UserIcon, Heart, TrendingUp, Target, Film, Check, Shuffle, FileText, Clock, ChevronRight, X } from 'lucide-react';
+  UserOscarProgress, 
+  OscarProgressSummary,
+  ProgressDetails
 
 interface UserDashboardProps {
   user: User;
   onBack: () => void;
   onLogout: () => void;
-  initialTab?: 'overview' | 'watchlist' | 'journey' | 'challenges';
+  initialTab?: 'overview' | 'watchlist' | 'journey';
   onQuickShot?: () => void;
   onSmartMatch?: () => void;
   onBrowseByYears?: () => void;
 }
 
-type DashboardTab = 'overview' | 'watchlist' | 'journey' | 'challenges';
+type DashboardTab = 'overview' | 'watchlist' | 'journey';
 
 const UserDashboard: React.FC<UserDashboardProps> = ({ 
   user, 
@@ -29,6 +30,10 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [watchlistMovies, setWatchlistMovies] = useState<UserWatchlistItem[]>([]);
   const [oscarProgress, setOscarProgress] = useState<OscarProgressSummary | null>(null);
+  const [selectedProgress, setSelectedProgress] = useState<ProgressDetails | null>(null);
+  const [progressRecommendation, setProgressRecommendation] = useState<string>('');
+  const [isLoadingProgress, setIsLoadingProgress] = useState(false);
+  const [isLoadingRecommendation, setIsLoadingRecommendation] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionFeedback, setActionFeedback] = useState<{type: 'success' | 'error', message: string} | null>(null);
@@ -131,9 +136,36 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   const tabs = [
     { id: 'overview', label: 'Przegląd', icon: UserIcon },
     { id: 'watchlist', label: 'Do obejrzenia', icon: Heart },
-    { id: 'journey', label: 'Moja podróż', icon: TrendingUp },
-    { id: 'challenges', label: 'Wyzwania', icon: Target }
+    { id: 'journey', label: 'Moja podróż', icon: TrendingUp }
   ];
+
+  const handleProgressClick = async (categoryType: 'decade' | 'oscar_year', categoryId: string) => {
+    setIsLoadingProgress(true);
+    setIsLoadingRecommendation(true);
+    
+    try {
+      // Get detailed progress data
+      const details = await getProgressDetails(user.id, categoryType, categoryId);
+      setSelectedProgress(details);
+      
+      // Get AI recommendation for remaining movies
+      if (details && details.remainingMovies.length > 0) {
+        const recommendation = await getProgressRecommendation(user.id, categoryType, categoryId, details.remainingMovies);
+        setProgressRecommendation(recommendation);
+      }
+    } catch (error) {
+      console.error('Error loading progress details:', error);
+      setActionFeedback({ type: 'error', message: 'Nie udało się załadować szczegółów postępu' });
+    } finally {
+      setIsLoadingProgress(false);
+      setIsLoadingRecommendation(false);
+    }
+  };
+
+  const closeProgressModal = () => {
+    setSelectedProgress(null);
+    setProgressRecommendation('');
+  };
 
   if (isLoading) {
     return (
@@ -469,14 +501,18 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                           <h3 className="text-white font-semibold text-lg mb-4">Postęp według dekad</h3>
                           <div className="space-y-4">
                             {oscarProgress.decades.map((decade) => (
-                              <div 
+                              <button 
                                 key={decade.id}
-                                className="p-4 rounded-lg border border-neutral-700 bg-neutral-800/50"
+                                onClick={() => handleProgressClick('decade', decade.category_identifier)}
+                                className="w-full p-4 rounded-lg border border-neutral-700 bg-neutral-800/50 hover:bg-neutral-700/50 transition-colors group"
                               >
                                 <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
                                   <span className="text-white font-medium">
                                     {getDecadeDisplayName(decade.category_identifier)}
                                   </span>
+                                    <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-[#DFBD69] transition-colors" />
+                                  </div>
                                   <span className="text-[#DFBD69] font-semibold">
                                     {decade.progress_percentage}%
                                   </span>
@@ -490,7 +526,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                                 <p className="text-neutral-400 text-xs">
                                   {decade.movies_watched_count} z {decade.total_movies_in_category} filmów ukończonych
                                 </p>
-                              </div>
+                              </button>
                             ))}
                           </div>
                         </div>
@@ -502,14 +538,18 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                           <h3 className="text-white font-semibold text-lg mb-4">Postęp według lat</h3>
                           <div className="grid md:grid-cols-2 gap-4">
                             {oscarProgress.years.map((year) => (
-                              <div 
+                              <button 
                                 key={year.id}
-                                className="p-4 rounded-lg border border-neutral-700 bg-neutral-800/50"
+                                onClick={() => handleProgressClick('oscar_year', year.category_identifier)}
+                                className="w-full p-4 rounded-lg border border-neutral-700 bg-neutral-800/50 hover:bg-neutral-700/50 transition-colors group text-left"
                               >
                                 <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
                                   <span className="text-white font-medium">
                                     Oscary {year.category_identifier}
                                   </span>
+                                    <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-[#DFBD69] transition-colors" />
+                                  </div>
                                   <span className="text-[#DFBD69] font-semibold">
                                     {year.progress_percentage}%
                                   </span>
@@ -523,7 +563,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                                 <p className="text-neutral-400 text-xs">
                                   {year.movies_watched_count} z {year.total_movies_in_category} nominowanych obejrzanych
                                 </p>
-                              </div>
+                              </button>
                             ))}
                           </div>
                         </div>
@@ -561,31 +601,158 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
               </div>
             )}
 
-            {/* Challenges Tab */}
-            {activeTab === 'challenges' && (
-              <div className="space-y-8">
-                <div>
-                  <h2 className="text-2xl font-bold text-white mb-6">Wyzwania</h2>
+          </div>
+        </div>
+
+        {/* Progress Details Modal */}
+        {selectedProgress && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-[#1a1c1e] rounded-2xl border border-neutral-700">
+              {/* Close Button */}
+              <button
+                onClick={closeProgressModal}
+                className="absolute top-6 right-6 z-10 p-2 text-neutral-400 hover:text-white transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              <div className="p-8">
+                {/* Header */}
+                <div className="text-center mb-8">
+                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                    {selectedProgress.categoryType === 'decade' 
+                      ? getDecadeDisplayName(selectedProgress.categoryId)
+                      : `Oscary ${selectedProgress.categoryId}`
+                    }
+                  </h2>
+                  <div className="flex items-center justify-center gap-4 text-neutral-400">
+                    <span>{selectedProgress.watchedMovies.length} obejrzanych</span>
+                    <span>•</span>
+                    <span>{selectedProgress.remainingMovies.length} pozostałych</span>
+                    <span>•</span>
+                    <span className="text-[#DFBD69] font-semibold">{selectedProgress.progressPercentage}% ukończone</span>
+                  </div>
+                </div>
+      </div>
+    </div>
+  );
+  getProgressDetails,
+};
+  getProgressRecommendation,
+
+                {/* Progress Bar */}
+                {/* AI Recommendation */}
+                {selectedProgress.remainingMovies.length > 0 && (
                   <div 
-                    className="p-8 rounded-xl border border-neutral-700 text-center"
+                    className="p-6 rounded-lg border border-neutral-700 mb-8"
                     style={{
                       background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.12) 0%, rgba(223, 189, 105, 0.25) 100%)',
                     }}
                   >
-                    <Target className="w-12 h-12 text-[#DFBD69] mx-auto mb-4" />
-                    <h3 className="text-white font-semibold text-lg mb-2">Podejmij wyzwania</h3>
-                    <p className="text-neutral-400">
-                      Ta sekcja będzie dostępna wkrótce. Tutaj będziesz mógł podejmować różne wyzwania filmowe.
-                    </p>
+                    <h3 className="text-[#DFBD69] font-bold text-lg mb-4 flex items-center gap-2">
+                      🤖 Rekomendacja AI
+                    </h3>
+                    {isLoadingRecommendation ? (
+                      <div className="flex items-center gap-3">
+                        <div className="w-5 h-5 border-2 border-[#DFBD69] rounded-full animate-spin border-t-transparent"></div>
+                        <span className="text-neutral-300">Analizuję pozostałe filmy...</span>
+                      </div>
+                    ) : (
+                      <p className="text-neutral-200 leading-relaxed">
+                        {progressRecommendation || 'Nie udało się wygenerować rekomendacji.'}
+                      </p>
+                    )}
                   </div>
+                )}
+                <div className="mb-8">
+                {/* Movies Grid */}
+                <div className="grid md:grid-cols-2 gap-8">
+                  {/* Watched Movies */}
+                  {selectedProgress.watchedMovies.length > 0 && (
+                    <div>
+                      <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+                        ✅ Obejrzane ({selectedProgress.watchedMovies.length})
+                      </h3>
+                      <div className="space-y-3 max-h-96 overflow-y-auto">
+                        {selectedProgress.watchedMovies.map((movie) => (
+                          <div 
+                            key={movie.id}
+                            className="flex gap-3 p-3 rounded-lg bg-green-600/20 border border-green-600/30"
+                          >
+                            <img 
+                              src={formatPosterUrl(movie.poster_path)}
+                              alt={`${movie.title} Poster`}
+                              className="w-12 h-16 object-cover rounded flex-shrink-0"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-white font-medium text-sm leading-tight mb-1">
+                                {movie.title}
+                              </h4>
+                              <p className="text-green-400 text-xs">
+                                {movie.year} • {movie.is_best_picture_winner ? 'Zwycięzca' : 'Nominowany'}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <div className="w-full bg-neutral-700 rounded-full h-3">
+                  {/* Remaining Movies */}
+                  {selectedProgress.remainingMovies.length > 0 && (
+                    <div>
+                      <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
+                        📋 Do obejrzenia ({selectedProgress.remainingMovies.length})
+                      </h3>
+                      <div className="space-y-3 max-h-96 overflow-y-auto">
+                        {selectedProgress.remainingMovies.map((movie) => (
+                          <div 
+                            key={movie.id}
+                            className="flex gap-3 p-3 rounded-lg bg-neutral-800/50 border border-neutral-700 hover:bg-neutral-700/50 transition-colors group"
+                          >
+                            <img 
+                              src={formatPosterUrl(movie.poster_path)}
+                              alt={`${movie.title} Poster`}
+                              className="w-12 h-16 object-cover rounded flex-shrink-0"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-white font-medium text-sm leading-tight mb-1">
+                                {movie.title}
+                              </h4>
+                              <p className="text-neutral-400 text-xs mb-2">
+                                {movie.year} • {movie.is_best_picture_winner ? 'Zwycięzca' : 'Nominowany'}
+                              </p>
+                              <button
+                                onClick={() => handleMarkAsWatched(movie.id, movie.title)}
+                                className="text-xs bg-[#DFBD69] text-black px-2 py-1 rounded hover:bg-[#E8C573] transition-colors opacity-0 group-hover:opacity-100"
+                              >
+                                Oznacz jako obejrzany
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                    <div 
+                  {/* Completed State */}
+                  {selectedProgress.remainingMovies.length === 0 && (
+                    <div className="md:col-span-2 text-center py-8">
+                      <div className="text-6xl mb-4">🎉</div>
+                      <h3 className="text-white font-bold text-xl mb-2">Gratulacje!</h3>
+                      <p className="text-neutral-400">
+                        Ukończyłeś wszystkie filmy z tej kategorii!
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
-            )}
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
+        )}
+                      className="bg-gradient-to-r from-[#DFBD69] to-[#E8C573] h-3 rounded-full transition-all duration-500"
+                      style={{ width: `${selectedProgress.progressPercentage}%` }}
+                    ></div>
+                  </div>
+                </div>
 export default UserDashboard;
