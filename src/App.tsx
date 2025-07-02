@@ -239,6 +239,17 @@ function App() {
         onBrowseByYearsClick={handleBrowseByYearsClick}
       />
       {/* Gradientowy separator */}
+      <div className="bg-[#070000]">
+        <div className="max-w-6xl mx-auto px-6">
+          <div 
+            className="h-px w-full"
+            style={{
+              background: 'linear-gradient(90deg, transparent, rgba(223, 189, 105, 0.3), transparent)'
+            }}
+          ></div>
+        </div>
+      </div>
+      {/* Gradientowy separator */}
       <div className="py-8 bg-[#070000]">
         <div className="max-w-6xl mx-auto px-6">
           <div 
