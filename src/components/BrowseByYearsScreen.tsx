@@ -309,16 +309,7 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
               {/* Decade Selection */}
               <div className="mb-12 px-6">
                 <div className="max-w-6xl mx-auto">
-                  <div className="relative flex overflow-x-auto scrollbar-hide gap-x-4 lg:justify-center lg:gap-x-4">
-                    {/* Left scroll indicator */}
-                    <div className="absolute left-0 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                      <div className="flex items-center h-full">
-                        <div className="w-6 h-6 flex items-center justify-center text-[#DFBD69]/70">
-                          <ChevronLeft className="w-5 h-5" />
-                        </div>
-                      </div>
-                    </div>
-                    
+                  <div className="flex overflow-x-auto scrollbar-hide gap-x-4 lg:justify-center lg:gap-x-4">
                     {decadeStats.map((decade) => (
                       <button
                         key={decade.id}
@@ -337,15 +328,6 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
                         </span>
                       </button>
                     ))}
-                    
-                    {/* Right scroll indicator */}
-                    <div className="absolute right-0 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                      <div className="flex items-center h-full">
-                        <div className="w-6 h-6 flex items-center justify-center text-[#DFBD69]/70">
-                          <ChevronRight className="w-5 h-5" />
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -354,35 +336,24 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
               <div className="mb-12 px-6">
                 <div className="relative">
                   {/* Navigation Arrows - Hidden on mobile */}
-                  <div className="flex justify-between absolute left-0 right-0 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none">
-                    <button
-                      onClick={handlePreviousYear}
-                      disabled={!selectedYear || availableYears.indexOf(selectedYear) === 0}
-                      className="pointer-events-auto p-3 text-[#DFBD69] hover:text-[#E8C573] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      <ChevronLeft className="w-8 h-8" />
-                    </button>
-                    
-                    <button
-                      onClick={handleNextYear}
-                      disabled={!selectedYear || availableYears.indexOf(selectedYear) === availableYears.length - 1}
-                      className="pointer-events-auto p-3 text-[#DFBD69] hover:text-[#E8C573] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      <ChevronRight className="w-8 h-8" />
-                    </button>
-                  </div>
+                  <button
+                    onClick={handlePreviousYear}
+                    disabled={!selectedYear || availableYears.indexOf(selectedYear) === 0}
+                    className="hidden lg:block absolute left-0 top-1/2 transform -translate-y-1/2 z-10 p-3 text-[#DFBD69] hover:text-[#E8C573] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    <ChevronLeft className="w-8 h-8" />
+                  </button>
+                  
+                  <button
+                    onClick={handleNextYear}
+                    disabled={!selectedYear || availableYears.indexOf(selectedYear) === availableYears.length - 1}
+                    className="hidden lg:block absolute right-0 top-1/2 transform -translate-y-1/2 z-10 p-3 text-[#DFBD69] hover:text-[#E8C573] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    <ChevronRight className="w-8 h-8" />
+                  </button>
 
                   {/* Year Slider Container */}
-                  <div className="lg:mx-16 overflow-hidden relative">
-                    {/* Left scroll indicator - visible on mobile */}
-                    <div className="absolute left-0 top-1/2 transform -translate-y-1/2 lg:hidden pointer-events-none">
-                      <div className="flex items-center h-full">
-                        <div className="w-6 h-6 flex items-center justify-center text-[#DFBD69]/70">
-                          <ChevronLeft className="w-5 h-5" />
-                        </div>
-                      </div>
-                    </div>
-                    
+                  <div className="lg:mx-16 overflow-hidden">
                     <div 
                       ref={yearSliderRef}
                       className="flex space-x-6 lg:space-x-8 overflow-x-auto scrollbar-hide py-4"
@@ -410,15 +381,6 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
                           ></div>
                         </div>
                       ))}
-                    </div>
-                    
-                    {/* Right scroll indicator - visible on mobile */}
-                    <div className="absolute right-0 top-1/2 transform -translate-y-1/2 lg:hidden pointer-events-none">
-                      <div className="flex items-center h-full">
-                        <div className="w-6 h-6 flex items-center justify-center text-[#DFBD69]/70">
-                          <ChevronRight className="w-5 h-5" />
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>
