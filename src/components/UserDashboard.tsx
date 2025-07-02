@@ -3,6 +3,7 @@ import { ArrowLeft, LogOut, User as UserIcon, Heart, TrendingUp, Target, Film, C
 import { getUserProfile, getUserStats, getWatchlistMovies, getUserOscarProgress, getUserAchievements, markMovieAsWatched, UserProfile, UserStats, UserWatchlistItem, UserOscarProgress, OscarProgressSummary, UserAchievement } from '../lib/supabase';
 import { supabase } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 
 interface UserDashboardProps {
   user: User;
@@ -47,6 +48,20 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   const [aiInsight, setAiInsight] = useState<string>('');
   const [isLoadingInsight, setIsLoadingInsight] = useState(false);
   const [isUpdatingProgress, setIsUpdatingProgress] = useState(false);
+
+  // Tematyczne opisy dla poziomów użytkownika
+  const levelDescriptions: { [key: number]: { title: string; description: string } } = {
+    1: { title: 'Nowicjusz Filmowy', description: 'Pierwsze kroki w świecie Oscarów' },
+    2: { title: 'Odkrywca Klasyków', description: 'Zaczynasz poznawać historię kina' },
+    3: { title: 'Koneser Kina', description: 'Doceniasz niuanse i arcydzieła' },
+    4: { title: 'Mistrz Oscarów', description: 'Prawdziwy ekspert w dziedzinie nagród' },
+    5: { title: 'Legenda Srebrnego Ekranu', description: 'Twoja wiedza jest bezcenna' },
+    6: { title: 'Filmowy Erudyta', description: 'Encyklopedyczna znajomość kinematografii' },
+    7: { title: 'Oscarowy Wizjoner', description: 'Widzisz to, co inni przeoczają' },
+    8: { title: 'Strażnik Dziedzictwa Filmu', description: 'Chronisz historię kina' },
+    9: { title: 'Filmowy Autorytet', description: 'Twoja opinia ma ogromną wartość' },
+    10: { title: 'Nieśmiertelna Ikona Kina', description: 'Osiągnąłeś filmowe oświecenie' }
+  };
 
   useEffect(() => {
     loadUserData();
@@ -485,7 +500,12 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                       <p className="text-2xl font-bold text-[#DFBD69]">
                         {userProfile?.level || 1}
                       </p>
-                      <p className="text-neutral-400 text-sm">poziom</p>
+                      <p className="text-neutral-400 text-sm">
+                        {levelDescriptions[userProfile?.level || 1]?.title || 'Nowicjusz Filmowy'}
+                      </p>
+                      <p className="text-neutral-500 text-xs mt-1">
+                        {levelDescriptions[userProfile?.level || 1]?.description || 'Pierwsze kroki w świecie Oscarów'}
+                      </p>
                     </div>
 
                     <div 
