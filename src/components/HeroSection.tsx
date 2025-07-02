@@ -22,8 +22,8 @@ const HeroSection: React.FC = () => {
           </h1>
           
           <p className="text-xl md:text-2xl text-neutral-300 max-w-3xl mx-auto leading-relaxed font-light">
-            Inteligentne rekomendacje Oscarowych klasyków<br className="hidden md:block" />
-            dopasowane do Twojego oczekiwania.
+            Inteligentne rekomendacje oscarowych klasyków<br className="hidden md:block" />
+            dopasowane do Twoich oczekiwań.
           </p>
           
           <div className="pt-4">
