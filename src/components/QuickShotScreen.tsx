@@ -70,6 +70,14 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
         return;
       }
       
+      // 🔍 DEBUG: Log the movie that was fetched
+      console.log('🎬 QuickShot: Fetched movie:', {
+        id: movie.id,
+        title: movie.title,
+        oscar_year: movie.oscar_year,
+        tmdb_id: movie.tmdb_id
+      });
+      
       setCurrentMovie(movie);
       
       // Get AI recommendation for this specific movie
@@ -141,10 +149,19 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
 
     if (!currentMovie) return;
 
+    // 🔍 DEBUG: Log the movie being added to list
+    console.log('📝 QuickShot: Adding movie to list:', {
+      id: currentMovie.id,
+      title: currentMovie.title,
+      oscar_year: currentMovie.oscar_year,
+      tmdb_id: currentMovie.tmdb_id
+    });
+
     try {
       // Get current user
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
+        console.error('❌ QuickShot: User not authenticated');
         setActionFeedback({ type: 'error', message: 'Nie jesteś zalogowany' });
         return;
       }
@@ -152,19 +169,25 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
       // Get or create "Do obejrzenia" list
       const listId = await getOrCreateDefaultListId(user.id, 'Do obejrzenia');
       if (!listId) {
+        console.error('❌ QuickShot: Could not get/create list');
         setActionFeedback({ type: 'error', message: 'Nie udało się znaleźć listy' });
         return;
       }
 
+      console.log('📋 QuickShot: Using list ID:', listId);
+
       // Add movie to list
       const success = await addMovieToList(listId, currentMovie.id);
       if (success) {
+        console.log('✅ QuickShot: Successfully added movie to list');
         setActionFeedback({ type: 'success', message: `"${currentMovie.title}" dodano do listy!` });
       } else {
+        console.error('❌ QuickShot: Failed to add movie to list');
         setActionFeedback({ type: 'error', message: 'Nie udało się dodać filmu do listy' });
       }
     } catch (error) {
       console.error('Error adding to list:', error);
+      console.error('❌ QuickShot: Exception in handleAddToList:', error);
       setActionFeedback({ type: 'error', message: 'Wystąpił błąd podczas dodawania do listy' });
     }
   };
@@ -177,6 +200,13 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
 
     if (!currentMovie) return;
 
+    // 🔍 DEBUG: Log the movie being marked as watched
+    console.log('✅ QuickShot: Marking movie as watched:', {
+      id: currentMovie.id,
+      title: currentMovie.title,
+      oscar_year: currentMovie.oscar_year
+    });
+
     try {
       // Get current user
       const { data: { user } } = await supabase.auth.getUser();
@@ -188,17 +218,21 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
       // Mark movie as watched
       const success = await markMovieAsWatched(user.id, currentMovie.id);
       if (success) {
+        console.log('✅ QuickShot: Successfully marked movie as watched');
         setActionFeedback({ type: 'success', message: `"${currentMovie.title}" oznaczono jako obejrzany!` });
       } else {
+        console.error('❌ QuickShot: Failed to mark movie as watched');
         setActionFeedback({ type: 'error', message: 'Nie udało się oznaczyć filmu jako obejrzany' });
       }
     } catch (error) {
       console.error('Error marking as watched:', error);
+      console.error('❌ QuickShot: Exception in handleWatched:', error);
       setActionFeedback({ type: 'error', message: 'Wystąpił błąd podczas oznaczania filmu' });
     }
   };
 
   const handleMyJourney = () => {
+    console.log('🔄 QuickShot: Shuffling to get new movie...');
     if (isAuthenticated) {
       onGoToJourney();
     } else {

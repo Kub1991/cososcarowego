@@ -902,6 +902,8 @@ export async function getUserDetailedAnalytics(userId: string): Promise<{
 // ENHANCED: Fair Movie Selection with Last Selected Tracking
 export async function getRandomOscarMovie(): Promise<Movie | null> {
   try {
+    console.log('🎲 Supabase: Starting fair movie selection...');
+    
     // Step 1: Get movies that were least recently selected (or never selected)
     // NULLS FIRST ensures movies never selected have highest priority
     // UPDATED: Increased from 15 to 50 for much better variety
@@ -914,6 +916,7 @@ export async function getRandomOscarMovie(): Promise<Movie | null> {
 
     if (queryError || !leastRecentMovies || leastRecentMovies.length === 0) {
       console.error('Error fetching least recent movies:', queryError);
+      console.error('❌ Supabase: Failed to fetch least recent movies, trying fallback...');
       
       // Fallback: Get any random movies if the fair selection fails
       const { data: fallbackMovies, error: fallbackError } = await supabase
@@ -924,14 +927,27 @@ export async function getRandomOscarMovie(): Promise<Movie | null> {
 
       if (fallbackError || !fallbackMovies || fallbackMovies.length === 0) {
         console.error('Fallback query also failed:', fallbackError);
+        console.error('❌ Supabase: Both main and fallback queries failed');
         return null;
       }
 
+      console.log('🔄 Supabase: Using fallback selection from', fallbackMovies.length, 'movies');
       return fallbackMovies[Math.floor(Math.random() * fallbackMovies.length)];
     }
 
+    console.log('📊 Supabase: Found', leastRecentMovies.length, 'least recently selected movies');
+    
     // Step 2: Randomly select one movie from the least recently selected pool
     const selectedMovie = leastRecentMovies[Math.floor(Math.random() * leastRecentMovies.length)];
+
+    // 🔍 DEBUG: Log the selected movie details
+    console.log('🎯 Supabase: Selected movie from pool:', {
+      id: selectedMovie.id,
+      title: selectedMovie.title,
+      oscar_year: selectedMovie.oscar_year,
+      tmdb_id: selectedMovie.tmdb_id,
+      last_selected_at: selectedMovie.last_selected_at || 'Never selected before'
+    });
 
     // Step 3: Update the selected movie's last_selected_at timestamp
     const { error: updateError } = await supabase
@@ -944,8 +960,11 @@ export async function getRandomOscarMovie(): Promise<Movie | null> {
 
     if (updateError) {
       console.error('Error updating last_selected_at:', updateError);
+      console.error('❌ Supabase: Failed to update last_selected_at for movie:', selectedMovie.title);
       // Don't fail the whole operation if timestamp update fails
       // User will still get their movie, just without tracking
+    } else {
+      console.log('✅ Supabase: Successfully updated last_selected_at for:', selectedMovie.title);
     }
 
     console.log(`🎯 Fair Selection (Pool: 50): Chose "${selectedMovie.title}" (last selected: ${selectedMovie.last_selected_at || 'Never'})`);
@@ -954,6 +973,7 @@ export async function getRandomOscarMovie(): Promise<Movie | null> {
 
   } catch (error) {
     console.error('Error in getRandomOscarMovie:', error);
+    console.error('❌ Supabase: Exception in getRandomOscarMovie:', error);
     return null;
   }
 }
@@ -1053,6 +1073,13 @@ export async function getSelectionStats(): Promise<{
     }
 
     const totalMovies = movies.length;
+    // 🔍 DEBUG: Log the parameters being passed
+    console.log('📝 Supabase: Adding movie to list:', {
+      listId,
+      movieId,
+      notes: notes || 'No notes'
+    });
+    
     const neverSelected = movies.filter(m => m.last_selected_at === null).length;
     const recentlySelected = movies.filter(m => {
       if (!m.last_selected_at) return false;
@@ -1063,9 +1090,12 @@ export async function getSelectionStats(): Promise<{
     const selectedMovies = movies
       .filter(m => m.last_selected_at !== null)
       .map(m => new Date(m.last_selected_at!));
+      console.log('ℹ️ Supabase: Movie already in list, skipping insertion');
 
     const oldestSelection = selectedMovies.length > 0 
       ? new Date(Math.min(...selectedMovies.map(d => d.getTime()))).toISOString()
+    console.log('📝 Supabase: Movie not in list, inserting...');
+
       : null;
     
     const newestSelection = selectedMovies.length > 0
@@ -1076,18 +1106,23 @@ export async function getSelectionStats(): Promise<{
       totalMovies,
       neverSelected,
       recentlySelected,
+      console.error('❌ Supabase: Database error in addMovieToList:', error);
       oldestSelection,
       newestSelection
     };
+    console.log('✅ Supabase: Successfully inserted movie into list');
   } catch (error) {
     console.error('Error in getSelectionStats:', error);
     return null;
+    console.error('❌ Supabase: Exception in addMovieToList:', error);
   }
 }
 
 // Browse by Years functions
 
 // Get all available Oscar years
+    console.log('📋 Supabase: Getting/creating default list:', { userId, listName });
+    
 export async function getAvailableOscarYears(): Promise<number[]> {
   try {
     const { data, error } = await supabase
@@ -1099,14 +1134,18 @@ export async function getAvailableOscarYears(): Promise<number[]> {
 
     if (error || !data) {
       console.error('Error fetching Oscar years:', error);
+      console.error('❌ Supabase: Error finding default list:', findError);
       return [];
     }
 
     // Get unique years
     const uniqueYears = [...new Set(data.map(movie => movie.oscar_year))].filter(year => year !== null) as number[];
+      console.log('✅ Supabase: Found existing list with ID:', existingList.id);
     return uniqueYears.sort((a, b) => a - b);
   } catch (error) {
     console.error('Error in getAvailableOscarYears:', error);
+    console.log('📝 Supabase: List not found, creating new one...');
+
     return [];
   }
 }
@@ -1124,12 +1163,15 @@ export async function getBestPictureWinner(oscarYear: number): Promise<Movie | n
 
     if (error || !data) {
       console.error('Error fetching Best Picture winner:', error);
+      console.error('❌ Supabase: Error creating default list:', createError);
       return null;
     }
 
+    console.log('✅ Supabase: Created new list with ID:', newList.id);
     return data;
   } catch (error) {
     console.error('Error in getBestPictureWinner:', error);
+    console.error('❌ Supabase: Exception in getOrCreateDefaultListId:', error);
     return null;
   }
 }
