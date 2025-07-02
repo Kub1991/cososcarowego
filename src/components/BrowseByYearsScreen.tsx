@@ -26,10 +26,10 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
   // ... [rest of the component code remains unchanged until the end]
 
   const parseBriefSections = (briefText: string) => {
+    const lines = briefText.split('\n');
     const sections: { title: string; content: string; }[] = [];
     let currentSection = { title: '', content: '' };
-    const lines = briefText.split('\n');
-  
+    
     for (const line of lines) {
       const headerMatch = line.match(/^(.+?)\s*\*\*(.+?)\*\*/);
       
@@ -71,7 +71,7 @@ const BrowseByYearsScreen: React.FC<BrowseByYearsScreenProps> = ({ onBack, isAut
   };
 
   return (
-    // ... [rest of the JSX remains unchanged]
+    // ... [rest of JSX remains unchanged]
   );
 };
 
