@@ -487,7 +487,7 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
             >
               <div className="flex items-center justify-between mb-8">
                 <button
-                  onClick={() => setCurrentStep('result')} 
+                  onClick={() => setCurrentStep('result')}
                   className="text-neutral-400 hover:text-white transition-colors flex items-center gap-2 text-sm"
                 >
                   ← Powrót do rezultatu
@@ -548,6 +548,16 @@ const QuickShotScreen: React.FC<QuickShotScreenProps> = ({ onBack, isAuthenticat
                     </div>
                   </div>
                 )}
+
+                <div className="text-center mt-8">
+                  <button 
+                    onClick={() => setCurrentStep('result')}
+                    className="bg-[#DFBD69] text-black font-semibold py-3 px-8 rounded-lg hover:bg-[#E8C573] transition-colors flex items-center justify-center gap-2 mx-auto"
+                  >
+                    <Play className="w-5 h-5" />
+                    Gotowy do oglądania
+                  </button>
+                </div>
               </div>
             </div>
           )}

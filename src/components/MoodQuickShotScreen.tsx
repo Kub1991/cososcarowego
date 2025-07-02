@@ -389,7 +389,7 @@ const MoodQuickShotScreen: React.FC<MoodQuickShotScreenProps> = ({
                     <div className="flex flex-wrap gap-4 text-sm text-neutral-300 mb-4">
                       <span>⏰ <strong>Czas:</strong> {currentMovie.runtime ? `${Math.floor(currentMovie.runtime / 60)}h ${currentMovie.runtime % 60}min` : 'Nieznany'}</span>
                       <span>🎭 <strong>Gatunek:</strong> {formatThematicTags(currentMovie.thematic_tags)}</span>
-                      <span>⭐ <strong>Ocena:</strong> {currentMovie.vote_average ? \`${currentMovie.vote_average}/10` : 'N/A'}</span>
+                      <span>⭐ <strong>Ocena:</strong> {currentMovie.vote_average ? `${currentMovie.vote_average}/10` : 'N/A'}</span>
                     </div>
 
                     {/* Mood Match Section */}
@@ -481,7 +481,14 @@ const MoodQuickShotScreen: React.FC<MoodQuickShotScreenProps> = ({
                     className="w-full bg-neutral-700 text-white font-semibold py-4 px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2"
                   >
                     <Check className="w-5 h-5" />
-                    Obejrzane
+                    Obejrzałem
+                  </button>
+                  <button 
+                    onClick={handleShuffle}
+                    className="w-full bg-neutral-700 text-white font-semibold py-4 px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <img src="/losowanie.png" alt="Losuj ponownie" className="w-5 h-5" />
+                    Losuj ponownie
                   </button>
                 </div>
               </div>
@@ -498,7 +505,7 @@ const MoodQuickShotScreen: React.FC<MoodQuickShotScreenProps> = ({
             >
               <div className="flex items-center justify-between mb-8">
                 <button
-                  onClick={() => setCurrentStep('result')} 
+                  onClick={() => setCurrentStep('result')}
                   className="text-neutral-400 hover:text-white transition-colors flex items-center gap-2 text-sm"
                 >
                   ← Powrót do rezultatu
