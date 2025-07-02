@@ -115,6 +115,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
     { id: 'journey', label: 'Moja podróż', icon: TrendingUp },
     { id: 'challenges', label: 'Wyzwania', icon: Target }
   ];
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#070000] flex items-center justify-center">
@@ -325,6 +326,9 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                     </div>
                   </div>
                 </div>
+              </div>
+            )}
+
             {/* Movie Lists Tab */}
             {activeTab === 'watchlist' && (
               <div className="space-y-8">
@@ -384,18 +388,6 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                             <h3 className="md:hidden text-white font-medium text-sm leading-tight flex-1">
                               {listMovie.movies?.title}
                             </h3>
-                            
-                            {/* Alternative mobile button next to title (commented out - using corner button instead) */}
-                            {/* 
-                            <button
-                              onClick={() => handleMarkAsWatched(listMovie.movie_id, listMovie.movies?.title || 'Film')}
-                              className="md:hidden bg-green-600 hover:bg-green-700 text-white p-1 rounded-full transition-colors duration-200 shadow-lg flex-shrink-0"
-                              title="Oznacz jako obejrzany"
-                              aria-label="Oznacz jako obejrzany"
-                            >
-                              <Check className="w-4 h-4" />
-                            </button>
-                            */}
                           </div>
                           
                           {/* Keep original title for desktop (hidden on mobile) */}
