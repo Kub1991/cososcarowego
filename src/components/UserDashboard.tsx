@@ -115,7 +115,6 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
     { id: 'journey', label: 'Moja podróż', icon: TrendingUp },
     { id: 'challenges', label: 'Wyzwania', icon: Target }
   ];
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#070000] flex items-center justify-center">
@@ -187,25 +186,64 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
           
           {/* Discovery Buttons - Always visible at top */}
           <div className="mt-6 pt-6 border-t border-neutral-600">
-            <div className="flex flex-wrap gap-3">
+            <div className="flex gap-2 md:gap-3 overflow-x-auto scrollbar-hide">
               <button
                 onClick={onQuickShot}
                 disabled={!onQuickShot}
-                className="px-4 py-2 bg-[#DFBD69] text-black font-semibold rounded-lg hover:bg-[#E8C573] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className="flex-shrink-0 px-3 md:px-4 py-2 text-black font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.9) 0%, rgba(223, 189, 105, 1) 100%)',
+                }}
+                onMouseEnter={(e) => {
+                  if (!e.currentTarget.disabled) {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(232, 197, 115, 0.9) 0%, rgba(232, 197, 115, 1) 100%)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!e.currentTarget.disabled) {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(223, 189, 105, 0.9) 0%, rgba(223, 189, 105, 1) 100%)';
+                  }
+                }}
               >
                 Szybki strzał
               </button>
               <button
                 onClick={onSmartMatch}
                 disabled={!onSmartMatch}
-                className="px-4 py-2 bg-[#DFBD69] text-black font-semibold rounded-lg hover:bg-[#E8C573] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className="flex-shrink-0 px-3 md:px-4 py-2 text-black font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.9) 0%, rgba(223, 189, 105, 1) 100%)',
+                }}
+                onMouseEnter={(e) => {
+                  if (!e.currentTarget.disabled) {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(232, 197, 115, 0.9) 0%, rgba(232, 197, 115, 1) 100%)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!e.currentTarget.disabled) {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(223, 189, 105, 0.9) 0%, rgba(223, 189, 105, 1) 100%)';
+                  }
+                }}
               >
                 Dopasowany wybór
               </button>
               <button
                 onClick={onBrowseByYears}
                 disabled={!onBrowseByYears}
-                className="px-4 py-2 bg-[#DFBD69] text-black font-semibold rounded-lg hover:bg-[#E8C573] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className="flex-shrink-0 px-3 md:px-4 py-2 text-black font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(223, 189, 105, 0.9) 0%, rgba(223, 189, 105, 1) 100%)',
+                }}
+                onMouseEnter={(e) => {
+                  if (!e.currentTarget.disabled) {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(232, 197, 115, 0.9) 0%, rgba(232, 197, 115, 1) 100%)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!e.currentTarget.disabled) {
+                    e.currentTarget.style.background = 'linear-gradient(135deg, rgba(223, 189, 105, 0.9) 0%, rgba(223, 189, 105, 1) 100%)';
+                  }
+                }}
               >
                 Przeszukaj latami
               </button>
@@ -323,9 +361,6 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
-
             {/* Movie Lists Tab */}
             {activeTab === 'watchlist' && (
               <div className="space-y-8">
@@ -385,6 +420,18 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                             <h3 className="md:hidden text-white font-medium text-sm leading-tight flex-1">
                               {listMovie.movies?.title}
                             </h3>
+                            
+                            {/* Alternative mobile button next to title (commented out - using corner button instead) */}
+                            {/* 
+                            <button
+                              onClick={() => handleMarkAsWatched(listMovie.movie_id, listMovie.movies?.title || 'Film')}
+                              className="md:hidden bg-green-600 hover:bg-green-700 text-white p-1 rounded-full transition-colors duration-200 shadow-lg flex-shrink-0"
+                              title="Oznacz jako obejrzany"
+                              aria-label="Oznacz jako obejrzany"
+                            >
+                              <Check className="w-4 h-4" />
+                            </button>
+                            */}
                           </div>
                           
                           {/* Keep original title for desktop (hidden on mobile) */}
