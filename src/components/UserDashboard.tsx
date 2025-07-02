@@ -653,7 +653,19 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                         <div>
                           <h3 className="text-white font-semibold text-lg mb-4">Postęp według lat</h3>
                           <div className="grid md:grid-cols-2 gap-4">
-                            {oscarProgress.years.map((year) => (
+                            {oscarProgress.years
+                              // Filter out years that have 100% progress and already have an achievement
+                              .filter(year => {
+                                if (year.progress_percentage < 100) return true;
+                                // Check if there's already an achievement for this year
+                                const achievementExists = userAchievements.some(
+                                  achievement => 
+                                    achievement.achievement_type === 'oscar_progress' && 
+                                    achievement.achievement_name === `Ukończono Oscary ${year.category_identifier}`
+                                );
+                                return !achievementExists;
+                              })
+                              .map((year) => (
                               <div 
                                 key={year.id}
                                 className="p-4 rounded-lg border border-neutral-700 bg-neutral-800/50 cursor-pointer hover:bg-neutral-700/50 transition-colors"
