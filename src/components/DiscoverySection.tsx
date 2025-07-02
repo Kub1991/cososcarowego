@@ -46,7 +46,7 @@ const DiscoverySection: React.FC<DiscoverySectionProps> = ({
   ];
 
   return (
-    <section className="py-20 bg-[#070000]">
+    <section id="discovery-section" className="py-20 bg-[#070000]">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">

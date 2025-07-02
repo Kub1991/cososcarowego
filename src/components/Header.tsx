@@ -77,14 +77,8 @@ const Header: React.FC<HeaderProps> = ({
           </div>
           
           <div className="hidden md:flex items-center gap-8">
-            <a href="#quick-shot" className="text-sm font-medium text-white/80 hover:text-[#DFBD69] transition-colors duration-200 drop-shadow-sm">
-              Szybki strzał
-            </a>
-            <a href="#personalized" className="text-sm font-medium text-white/80 hover:text-[#DFBD69] transition-colors duration-200 drop-shadow-sm">
-              Dopasowany wybór
-            </a>
-            <a href="#browse-years" className="text-sm font-medium text-white/80 hover:text-[#DFBD69] transition-colors duration-200 drop-shadow-sm">
-              Przeszukaj lata
+            <a href="#discovery-section" className="text-sm font-medium text-white/80 hover:text-[#DFBD69] transition-colors duration-200 drop-shadow-sm">
+              Jak chcesz odkrywać filmy?
             </a>
             <a href="#mood-filter" className="text-sm font-medium text-white/80 hover:text-[#DFBD69] transition-colors duration-200 drop-shadow-sm">
               Czego potrzebujesz?
@@ -150,26 +144,12 @@ const Header: React.FC<HeaderProps> = ({
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 pb-4 border-t border-white/10">
             <nav className="flex flex-col gap-4 pt-4">
-              <a 
-                href="#quick-shot" 
+              <a
+                href="#discovery-section" 
                 className="text-sm font-medium text-white/80 hover:text-[#DFBD69] transition-colors duration-200 drop-shadow-sm"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Szybki strzał
-              </a>
-              <a 
-                href="#personalized" 
-                className="text-sm font-medium text-white/80 hover:text-[#DFBD69] transition-colors duration-200 drop-shadow-sm"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Dopasowany wybór
-              </a>
-              <a 
-                href="#browse-years" 
-                className="text-sm font-medium text-white/80 hover:text-[#DFBD69] transition-colors duration-200 drop-shadow-sm"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Przeszukaj lata
+                Jak chcesz odkrywać filmy?
               </a>
               <a 
                 href="#mood-filter" 
