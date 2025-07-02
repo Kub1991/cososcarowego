@@ -21,6 +21,17 @@ interface RecommendationRequest {
     allowRental?: boolean
     showAll?: boolean
   }
+  // NEW: Progress insight request
+  categoryType?: 'decade' | 'year'
+  categoryIdentifier?: string
+  watchedCount?: number
+  totalCount?: number
+  toWatchMovies?: Array<{
+    title: string
+    thematic_tags?: Array<{tag: string, importance: number}>
+    mood_tags?: string[]
+    vote_average?: number
+  }>
 }
 
 interface Movie {
@@ -328,6 +339,33 @@ serve(async (req) => {
           brief: briefText,
           movie: movie
         }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    if (requestData.type === 'progress-insight') {
+      if (!requestData.categoryType || !requestData.categoryIdentifier) {
+        return new Response(
+          JSON.stringify({ error: 'Category type and identifier are required for progress insight' }),
+          { 
+            status: 400, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        )
+      }
+
+      const insight = await generateProgressInsight(
+        requestData.categoryType,
+        requestData.categoryIdentifier,
+        requestData.watchedCount || 0,
+        requestData.totalCount || 0,
+        requestData.toWatchMovies || []
+      )
+
+      return new Response(
+        JSON.stringify({ insight }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
@@ -1018,4 +1056,129 @@ Rozpocznij od: "🎬 **CO CZYNI TEN FILM WYJĄTKOWYM**"`
     console.error('Error generating brief:', error)
     return `"${movie.title}" (${movie.year}) - ${movie.overview || 'Klasyczny film oscarowy, który warto obejrzeć.'}`
   }
+}
+
+// NEW: Generate AI insight for progress tracking
+async function generateProgressInsight(
+  categoryType: 'decade' | 'year',
+  categoryIdentifier: string,
+  watchedCount: number,
+  totalCount: number,
+  toWatchMovies: Array<{
+    title: string
+    thematic_tags?: Array<{tag: string, importance: number}>
+    mood_tags?: string[]
+    vote_average?: number
+  }>
+): Promise<string> {
+  const openaiApiKey = Deno.env.get('OPENAI_API_KEY')
+  
+  if (!openaiApiKey) {
+    return generateProgressInsightFallback(categoryType, categoryIdentifier, watchedCount, totalCount, toWatchMovies)
+  }
+
+  try {
+    const categoryName = categoryType === 'decade' ? 
+      (categoryIdentifier === '2000s' ? 'lata 2000-2009' : 
+       categoryIdentifier === '2010s' ? 'lata 2010-2019' : categoryIdentifier) :
+      `rok ${categoryIdentifier}`
+    
+    const remainingCount = totalCount - watchedCount
+    const progressPercentage = totalCount > 0 ? Math.round((watchedCount / totalCount) * 100) : 0
+    
+    // Analyze remaining movies for recommendations
+    const movieAnalysis = toWatchMovies.slice(0, 5).map(movie => {
+      const genres = movie.thematic_tags?.map(t => t.tag).join(', ') || 'Dramat'
+      const moods = movie.mood_tags?.join(', ') || 'Inspiracja'
+      const rating = movie.vote_average ? `${movie.vote_average}/10` : 'brak oceny'
+      return `"${movie.title}" (${genres}, nastrój: ${moods}, ocena: ${rating})`
+    }).join('\n')
+
+    const prompt = `Jesteś ekspertem od filmów oscarowych, który motywuje użytkowników do kontynuowania ich kinowej podróży. Napisz krótki, zachęcający insight (2-3 zdania) dla użytkownika na podstawie jego postępu.
+
+POSTĘP UŻYTKOWNIKA:
+- Kategoria: ${categoryName}
+- Obejrzane filmy: ${watchedCount} z ${totalCount} (${progressPercentage}%)
+- Pozostało do obejrzenia: ${remainingCount} filmów
+
+FILMY DO OBEJRZENIA (próbka):
+${movieAnalysis || 'Brak szczegółów o filmach'}
+
+ZADANIE: Napisz motywujący insight (2-3 zdania) który:
+1. Docenia dotychczasowy postęp użytkownika
+2. Zachęca do kontynuowania
+3. Jeśli są filmy do obejrzenia, zasugeruj 1-2 konkretne tytuły z krótkimi uzasadnieniami (np. "dla lekkiej rozrywki" lub "dla mocnych emocji")
+4. Używa naturalnego, przyjaznego tonu
+
+PRZYKŁAD DOBREJ ODPOWIEDZI:
+"Świetnie! Masz już za sobą 65% filmów z lat 2010-2019 - to imponujący postęp! Zostały Ci jeszcze 4 filmy do zakończenia tej dekady. Jeśli masz ochotę na coś lekkiego, polecam 'La La Land', ale jeśli wolisz mocne emocje, 'Moonlight' będzie idealny."
+
+Napisz insight dla tego użytkownika:`
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openaiApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: 'Jesteś ekspertem od filmów oscarowych, który tworzy motywujące, krótkie insights dla użytkowników śledzących swój postęp w oglądaniu filmów. Zawsze jesteś pozytywny i zachęcający.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        max_tokens: 200,
+        temperature: 0.8
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error('OpenAI API error')
+    }
+
+    const data = await response.json()
+    return data.choices[0]?.message?.content || generateProgressInsightFallback(categoryType, categoryIdentifier, watchedCount, totalCount, toWatchMovies)
+
+  } catch (error) {
+    console.error('Error generating progress insight:', error)
+    return generateProgressInsightFallback(categoryType, categoryIdentifier, watchedCount, totalCount, toWatchMovies)
+  }
+}
+
+// Fallback insight generation when AI is not available
+function generateProgressInsightFallback(
+  categoryType: 'decade' | 'year',
+  categoryIdentifier: string,
+  watchedCount: number,
+  totalCount: number,
+  toWatchMovies: Array<{title: string}>
+): string {
+  const categoryName = categoryType === 'decade' ? 
+    (categoryIdentifier === '2000s' ? 'lata 2000-2009' : 
+     categoryIdentifier === '2010s' ? 'lata 2010-2019' : categoryIdentifier) :
+    `rok ${categoryIdentifier}`
+  
+  const remainingCount = totalCount - watchedCount
+  const progressPercentage = totalCount > 0 ? Math.round((watchedCount / totalCount) * 100) : 0
+  
+  if (remainingCount === 0) {
+    return `Gratulacje! Ukończyłeś wszystkie filmy z kategorii ${categoryName}. To wspaniałe osiągnięcie w Twojej oscarowej podróży!`
+  }
+  
+  if (progressPercentage >= 75) {
+    const suggestion = toWatchMovies[0]?.title || 'pozostałe filmy'
+    return `Świetnie! Masz już ${progressPercentage}% filmów z kategorii ${categoryName} za sobą. Zostało tylko ${remainingCount} filmów do ukończenia. Polecam zacząć od "${suggestion}".`
+  }
+  
+  if (progressPercentage >= 50) {
+    return `Dobra robota! Jesteś w połowie drogi przez ${categoryName} (${progressPercentage}%). Kontynuuj swoją podróż - zostało ${remainingCount} filmów do obejrzenia.`
+  }
+  
+  return `Rozpocząłeś swoją podróż przez ${categoryName} (${progressPercentage}% ukończone). Przed Tobą ${remainingCount} wspaniałych filmów oscarowych do odkrycia!`
 }
