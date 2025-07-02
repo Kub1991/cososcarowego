@@ -864,7 +864,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
                         <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
                           <button 
                             onClick={() => handleAddToList(recommendation.movie.id)}
-                            className="flex-1 h-14 sm:h-12 bg-neutral-700 text-white font-semibold px-3 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
+                            className="flex-1 h-12 bg-neutral-700 text-white font-semibold px-3 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
                           >
                             <img src="/ulubione.png" alt="Dodaj do listy" className="w-3 h-3 md:w-4 md:h-4" />
                             Do obejrzenia
@@ -872,7 +872,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
                           
                           <button 
                             onClick={() => handleWatched(recommendation.movie.id)}
-                            className="flex-1 h-14 sm:h-12 bg-neutral-700 text-white font-semibold px-3 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
+                            className="flex-1 h-12 bg-neutral-700 text-white font-semibold px-3 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
                           >
                             <Check className="w-3 h-3 md:w-4 md:h-4" />
                             Obejrzałem
@@ -880,7 +880,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
                           
                           <button 
                             onClick={() => handleBriefClick(recommendation)}
-                            className="flex-1 h-14 sm:h-12 bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] font-semibold px-3 rounded-lg hover:from-[#DFBD69]/30 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
+                            className="flex-1 h-12 bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] font-semibold px-3 rounded-lg hover:from-[#DFBD69]/30 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
                           >
                             <BookOpen className="w-3 h-3 md:w-4 md:h-4" />
                             5-MIN BRIEF
@@ -894,14 +894,14 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
 
               {/* FIXED: Mobile-responsive footer buttons */}
               <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 md:gap-4 px-2">
-                <button className="h-14 sm:h-12 bg-neutral-700 text-white font-semibold px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm">
+                <button className="bg-neutral-700 text-white font-semibold py-2 md:py-3 px-4 md:px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-sm md:text-base">
                   <Target className="w-3 h-3 md:w-4 md:h-4" />
                   Więcej rekomendacji
                 </button>
                 
                 <button 
                   onClick={restartQuiz}
-                  className="h-14 sm:h-12 bg-neutral-700 text-white font-semibold px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-xs sm:text-sm"
+                  className="bg-neutral-700 text-white font-semibold py-2 md:py-3 px-4 md:px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-sm md:text-base"
                 >
                   <img src="/losowanie.png" alt="Nowy match" className="w-3 h-3 md:w-4 md:h-4" />
                   Nowy Smart Match
