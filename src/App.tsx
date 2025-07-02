@@ -250,19 +250,7 @@ function App() {
         </div>
       </div>
       <MoodSection onMoodClick={handleMoodClick} />
-      <div className="py-8 bg-[#070000]">
-        <div className="max-w-6xl mx-auto px-6">
-          <div 
-            className="h-px w-full"
-            style={{
-              background: 'linear-gradient(90deg, transparent, rgba(223, 189, 105, 0.3), transparent)'
-            }}
-          ></div>
-        </div>
-      </div>
-      <div className="bg-[#070000]">
-        <RegistrationSection onRegistrationSuccess={handleLoginSuccess} />
-      </div>
+      <RegistrationSection onRegistrationSuccess={handleLoginSuccess} />
       <Footer />
       
       <AuthPromptModal 
