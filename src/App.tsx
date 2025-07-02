@@ -3,6 +3,10 @@ import { ArrowLeft, LogOut, User as UserIcon, Heart, TrendingUp, Target, Film, C
 import { getUserProfile, getUserStats, getWatchlistMovies, markMovieAsWatched, UserProfile, UserStats, UserWatchlistItem } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
+const MoodRecommendationScreen = React.lazy(() => import('./components/MoodRecommendationScreen'));
+
+type ViewType = 'main' | 'quickShot' | 'smartMatch' | 'browseByYears' | 'moodRecommendation' | 'dashboard';
+
 interface UserDashboardProps {
   user: User;
   onBack: () => void;
@@ -14,18 +18,14 @@ interface UserDashboardProps {
 }
 
 type DashboardTab = 'overview' | 'watchlist' | 'journey' | 'challenges';
-
 const UserDashboard: React.FC<UserDashboardProps> = ({ 
-const MoodRecommendationScreen = React.lazy(() => import('./components/MoodRecommendationScreen'));
   user, 
-  onBack, 
-type ViewType = 'main' | 'quickShot' | 'smartMatch' | 'browseByYears' | 'moodRecommendation' | 'dashboard';
+  onLogout, 
   initialTab = 'overview',
   onQuickShot,
   onSmartMatch,
   onBrowseByYears
 }) => {
-  const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<DashboardTab>(initialTab);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
@@ -75,11 +75,6 @@ type ViewType = 'main' | 'quickShot' | 'smartMatch' | 'browseByYears' | 'moodRec
     try {
       console.log('✅ Dashboard: Marking movie as watched:', movieTitle);
       
-  const handleMoodClick = (moodId: string) => {
-    console.log(`🎭 App: User selected mood "${moodId}"`);
-    setSelectedMood(moodId);
-    setCurrentView('moodRecommendation');
-  };
       const success = await markMovieAsWatched(user.id, movieId);
       if (success) {
         console.log('✅ Dashboard: Successfully marked movie as watched');
@@ -134,25 +129,6 @@ type ViewType = 'main' | 'quickShot' | 'smartMatch' | 'browseByYears' | 'moodRec
     );
   }
 
-  if (currentView === 'moodRecommendation' && selectedMood) {
-    return (
-      <Suspense fallback={<LoadingSkeleton type="quickshot" />}>
-        <MoodRecommendationScreen 
-          selectedMood={selectedMood}
-          onBack={handleBackToMain}
-          isAuthenticated={isAuthenticated}
-          onAuthPrompt={openAuthModal}
-          onGoToJourney={handleGoToJourney}
-        />
-        <AuthPromptModal 
-          isOpen={showAuthModal}
-          onClose={closeAuthModal}
-          featureName={authPromptFeature}
-          onLoginSuccess={handleLoginSuccess}
-        />
-      </Suspense>
-    );
-  }
   return (
     <div className="min-h-screen bg-[#070000]">
       {/* Action Feedback */}
@@ -462,7 +438,7 @@ type ViewType = 'main' | 'quickShot' | 'smartMatch' | 'browseByYears' | 'moodRec
             {/* Challenges Tab */}
             {activeTab === 'challenges' && (
               <div className="space-y-8">
-      <MoodSection onMoodClick={handleMoodClick} />
+                <div>
                   <h2 className="text-2xl font-bold text-white mb-6">Wyzwania</h2>
                   <div 
                     className="p-8 rounded-xl border border-neutral-700 text-center"
