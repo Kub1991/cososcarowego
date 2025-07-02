@@ -316,15 +316,15 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                       {watchlistMovies.map((listMovie) => (
                         <div key={listMovie.id} className="group relative">
-                          <div className="aspect-[2/3] mb-3 rounded-lg overflow-hidden bg-neutral-800">
+                          <div className="aspect-[2/3] mb-3 rounded-lg overflow-hidden bg-neutral-800 relative">
                             <img 
                               src={formatPosterUrl(listMovie.movies?.poster_path)}
                               alt={`${listMovie.movies?.title} Poster`}
                               className="w-full h-full object-cover"
                             />
                             
-                            {/* Watched Button - appears on hover */}
-                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            {/* Desktop: Watched Button - appears on hover */}
+                            <div className="hidden md:flex absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center justify-center">
                               <button
                                 onClick={() => handleMarkAsWatched(listMovie.movie_id, listMovie.movies?.title || 'Film')}
                                 className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-full transition-colors duration-200 shadow-lg"
@@ -333,9 +333,41 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
                                 <Check className="w-6 h-6" />
                               </button>
                             </div>
+                            
+                            {/* Mobile: Always visible watched button in top-right corner */}
+                            <div className="md:hidden absolute top-2 right-2">
+                              <button
+                                onClick={() => handleMarkAsWatched(listMovie.movie_id, listMovie.movies?.title || 'Film')}
+                                className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-full transition-colors duration-200 shadow-lg"
+                                title="Oznacz jako obejrzany"
+                                aria-label="Oznacz jako obejrzany"
+                              >
+                                <Check className="w-6 h-6" />
+                              </button>
+                            </div>
                           </div>
                           
-                          <h3 className="text-white font-medium text-sm leading-tight">
+                          {/* Movie title with mobile checkmark button */}
+                          <div className="flex items-start justify-between gap-2">
+                            <h3 className="text-white font-medium text-sm leading-tight flex-1">
+                              {listMovie.movies?.title}
+                            </h3>
+                            
+                            {/* Alternative mobile button next to title (commented out - using corner button instead) */}
+                            {/* 
+                            <button
+                              onClick={() => handleMarkAsWatched(listMovie.movie_id, listMovie.movies?.title || 'Film')}
+                              className="md:hidden bg-green-600 hover:bg-green-700 text-white p-1 rounded-full transition-colors duration-200 shadow-lg flex-shrink-0"
+                              title="Oznacz jako obejrzany"
+                              aria-label="Oznacz jako obejrzany"
+                            >
+                              <Check className="w-4 h-4" />
+                            </button>
+                            */}
+                          </div>
+                          
+                          {/* Keep original title for desktop (hidden on mobile) */}
+                          <h3 className="hidden md:block text-white font-medium text-sm leading-tight">
                             {listMovie.movies?.title}
                           </h3>
                         </div>
