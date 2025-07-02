@@ -864,7 +864,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
                         <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
                           <button 
                             onClick={() => handleAddToList(recommendation.movie.id)}
-                            className="flex-1 h-12 bg-neutral-700 text-white font-semibold px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-sm"
+                            className="flex-1 bg-neutral-700 text-white font-semibold py-2 md:py-3 px-4 md:px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-sm md:text-base"
                           >
                             <img src="/ulubione.png" alt="Dodaj do listy" className="w-4 h-4" />
                             Do obejrzenia
@@ -872,7 +872,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
                           
                           <button 
                             onClick={() => handleWatched(recommendation.movie.id)}
-                            className="flex-1 h-12 bg-neutral-700 text-white font-semibold px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-sm"
+                            className="flex-1 bg-neutral-700 text-white font-semibold py-2 md:py-3 px-4 md:px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-sm md:text-base"
                           >
                             <Check className="w-4 h-4" />
                             Obejrzałem
@@ -880,7 +880,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
                           
                           <button 
                             onClick={() => handleBriefClick(recommendation)}
-                            className="flex-1 h-12 bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] font-semibold px-4 rounded-lg hover:from-[#DFBD69]/30 transition-all flex items-center justify-center gap-2 text-sm"
+                            className="flex-1 bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] font-semibold py-2 md:py-3 px-4 md:px-6 rounded-lg hover:from-[#DFBD69]/30 transition-all flex items-center justify-center gap-2 text-sm md:text-base"
                           >
                             <BookOpen className="w-4 h-4" />
                             5-MIN BRIEF
