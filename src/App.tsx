@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, LogOut, User as UserIcon, Heart, TrendingUp, Target, Film, Check, Shuffle, FileText, Clock } from 'lucide-react';
-import { getUserProfile, getUserStats, getWatchlistMovies, markMovieAsWatched, UserProfile, UserStats, UserWatchlistItem } from './lib/supabase';
+import { getUserProfile, getUserStats, getWatchlistMovies, markMovieAsWatched, UserProfile, UserStats, UserWatchlistItem, supabase } from './lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
 interface UserDashboardProps {
-  user: User;
   onBack: () => void;
   onLogout: () => void;
   initialTab?: 'overview' | 'watchlist' | 'journey' | 'challenges';
@@ -16,7 +15,6 @@ interface UserDashboardProps {
 type DashboardTab = 'overview' | 'watchlist' | 'journey' | 'challenges';
 
 const UserDashboard: React.FC<UserDashboardProps> = ({ 
-  user, 
   onBack, 
   onLogout, 
   initialTab = 'overview',
@@ -24,6 +22,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   onSmartMatch,
   onBrowseByYears
 }) => {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [activeTab, setActiveTab] = useState<DashboardTab>(initialTab);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
@@ -33,8 +32,43 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   const [actionFeedback, setActionFeedback] = useState<{type: 'success' | 'error', message: string} | null>(null);
 
   useEffect(() => {
-    loadUserData();
-  }, [user.id]);
+    // Get current session and set up auth state listener
+    const initializeAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          setCurrentUser(session.user);
+        } else {
+          setError('Nie jesteś zalogowany');
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Error getting session:', error);
+        setError('Błąd podczas pobierania sesji');
+        setIsLoading(false);
+      }
+    };
+
+    initializeAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setCurrentUser(session.user);
+      } else {
+        setCurrentUser(null);
+        setError('Nie jesteś zalogowany');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      loadUserData();
+    }
+  }, [currentUser]);
 
   // Clear feedback after 3 seconds
   useEffect(() => {
@@ -47,14 +81,16 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   }, [actionFeedback]);
 
   const loadUserData = async () => {
+    if (!currentUser) return;
+    
     try {
       setIsLoading(true);
       setError(null);
 
       const [profile, stats, watchlist] = await Promise.all([
-        getUserProfile(user.id),
-        getUserStats(user.id),
-        getWatchlistMovies(user.id)
+        getUserProfile(currentUser.id),
+        getUserStats(currentUser.id),
+        getWatchlistMovies(currentUser.id)
       ]);
 
       setUserProfile(profile);
@@ -70,10 +106,12 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   };
 
   const handleMarkAsWatched = async (movieId: string, movieTitle: string) => {
+    if (!currentUser) return;
+    
     try {
       console.log('✅ Dashboard: Marking movie as watched:', movieTitle);
       
-      const success = await markMovieAsWatched(user.id, movieId);
+      const success = await markMovieAsWatched(currentUser.id, movieId);
       if (success) {
         console.log('✅ Dashboard: Successfully marked movie as watched');
         setActionFeedback({ type: 'success', message: `"${movieTitle}" oznaczono jako obejrzany!` });
@@ -100,11 +138,11 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
     if (userProfile?.display_name) {
       return userProfile.display_name;
     }
-    if (user?.user_metadata?.full_name) {
-      return user.user_metadata.full_name;
+    if (currentUser?.user_metadata?.full_name) {
+      return currentUser.user_metadata.full_name;
     }
-    if (user?.email) {
-      return user.email.split('@')[0];
+    if (currentUser?.email) {
+      return currentUser.email.split('@')[0];
     }
     return 'Użytkownik';
   };
@@ -116,12 +154,32 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
     { id: 'challenges', label: 'Wyzwania', icon: Target }
   ];
 
+  // Show loading while checking authentication
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#070000] flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="w-16 h-16 mx-auto border-2 border-[#DFBD69] rounded-full animate-spin border-t-transparent"></div>
           <p className="text-white text-lg">Ładowanie panelu użytkownika...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error if not authenticated or other errors
+  if (!currentUser || error) {
+    return (
+      <div className="min-h-screen bg-[#070000] flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <UserIcon className="w-16 h-16 text-[#DFBD69] mx-auto" />
+          <h2 className="text-white text-xl font-semibold">Wymagane logowanie</h2>
+          <p className="text-neutral-400">{error || 'Musisz być zalogowany, aby zobaczyć panel użytkownika'}</p>
+          <button
+            onClick={onBack}
+            className="px-6 py-3 bg-[#DFBD69] text-black font-semibold rounded-lg hover:bg-[#E8C573] transition-colors"
+          >
+            Powrót do strony głównej
+          </button>
         </div>
       </div>
     );
