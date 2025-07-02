@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, LogOut, User as UserIcon, Heart, TrendingUp, Target, Film, Check, Shuffle, FileText, Clock } from 'lucide-react';
-import { getUserProfile, getUserStats, getWatchlistMovies, markMovieAsWatched, UserProfile, UserStats, UserWatchlistItem } from '../lib/supabase';
+import { getUserProfile, getUserStats, getWatchlistMovies, markMovieAsWatched, UserProfile, UserStats, UserWatchlistItem } from './lib/supabase';
 import type { User } from '@supabase/supabase-js';
-
-const MoodRecommendationScreen = React.lazy(() => import('./components/MoodRecommendationScreen'));
-
-type ViewType = 'main' | 'quickShot' | 'smartMatch' | 'browseByYears' | 'moodRecommendation' | 'dashboard';
 
 interface UserDashboardProps {
   user: User;
@@ -18,8 +14,10 @@ interface UserDashboardProps {
 }
 
 type DashboardTab = 'overview' | 'watchlist' | 'journey' | 'challenges';
+
 const UserDashboard: React.FC<UserDashboardProps> = ({ 
   user, 
+  onBack, 
   onLogout, 
   initialTab = 'overview',
   onQuickShot,
