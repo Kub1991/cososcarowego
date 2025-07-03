@@ -916,10 +916,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
           {/* Brief View - Identical to QuickShotScreen */}
           {currentStep === 'brief' && selectedMovieForBrief && (
             <div 
-              className="p-8 md:p-12 md:rounded-2xl md:border md:border-neutral-700"
-              style={{
-                background: '#0a0a0a',
-              }}
+              className="p-0 md:p-12 md:rounded-2xl md:border md:border-neutral-700 bg-transparent md:bg-[#0a0a0a]"
             >
               <div className="flex items-center justify-between mb-8">
                 <button
