@@ -128,13 +128,20 @@ serve(async (req) => {
       // Generate AI expectation text if not exists
       let expectationText = targetMovie.ai_recommendation_text
       if (!expectationText) {
+        console.log(`🔍 Generating AI recommendation for "${targetMovie.title}" (${targetMovie.id})`)
         expectationText = await generateExpectationText(targetMovie)
         
         // Update the movie with the generated expectation text
-        await supabaseClient
+        const { error: updateError } = await supabaseClient
           .from('movies')
           .update({ ai_recommendation_text: expectationText })
           .eq('id', targetMovie.id)
+        
+        if (updateError) {
+          console.error(`❌ Error updating AI recommendation for "${targetMovie.title}":`, updateError)
+        } else {
+          console.log(`✅ Successfully saved AI recommendation for "${targetMovie.title}"`)
+        }
       }
 
       return new Response(
@@ -325,13 +332,20 @@ serve(async (req) => {
 
       let briefText = movie.ai_brief_text
       if (!briefText) {
+        console.log(`🔍 Generating AI brief for "${movie.title}" (${movie.id})`)
         briefText = await generateBrief(movie)
         
         // Update the movie with the generated brief
-        await supabaseClient
+        const { error: updateError } = await supabaseClient
           .from('movies')
           .update({ ai_brief_text: briefText })
           .eq('id', movie.id)
+        
+        if (updateError) {
+          console.error(`❌ Error updating AI brief for "${movie.title}":`, updateError)
+        } else {
+          console.log(`✅ Successfully saved AI brief for "${movie.title}"`)
+        }
       }
 
       return new Response(
@@ -850,7 +864,8 @@ function createMovieContext(movie: Movie): string {
 async function generateExpectationText(movie: any): Promise<string> {
   const openaiApiKey = Deno.env.get('OPENAI_API_KEY')
   
-  if (!openaiApiKey) {
+  if (!openaiApiKey || openaiApiKey.trim() === '') {
+    console.error('❌ Missing OpenAI API key for generating expectation text')
     // Return a fallback expectation text
     return `Ten ${movie.is_best_picture_winner ? 'nagrodzony Oscarem' : 'nominowany do Oscara'} film z ${movie.year} roku oferuje niezapomniane doświadczenie kinowe pełne emocji i mistrzowskiego rzemiosła filmowego.`
   }
@@ -905,7 +920,10 @@ Napisz podobny opis dla "${movie.title}":
     return data.choices[0]?.message?.content || `Ten ${movie.is_best_picture_winner ? 'nagrodzony Oscarem' : 'nominowany do Oscara'} film oferuje niezapomniane doświadczenie kinowe pełne emocji.`
 
   } catch (error) {
-    console.error('Error generating expectation text:', error)
+    console.error(`❌ Error generating expectation text for "${movie.title}":`, error)
+    if (error.message && error.message.includes('API key')) {
+      console.error('🔑 This appears to be an OpenAI API key issue. Check your OPENAI_API_KEY in Supabase Secrets.')
+    }
     return `Ten ${movie.is_best_picture_winner ? 'nagrodzony Oscarem' : 'nominowany do Oscara'} film z ${movie.year} roku oferuje niezapomniane doświadczenie kinowe pełne emocji i mistrzowskiego rzemiosła filmowego.`
   }
 }
@@ -968,7 +986,8 @@ async function generateExplanation(movie: any, userPreferences?: any): Promise<s
 async function generateBrief(movie: any): Promise<string> {
   const openaiApiKey = Deno.env.get('OPENAI_API_KEY')
   
-  if (!openaiApiKey) {
+  if (!openaiApiKey || openaiApiKey.trim() === '') {
+    console.error('❌ Missing OpenAI API key for generating brief')
     return `"${movie.title}" (${movie.year}) - ${movie.overview || 'Klasyczny film oscarowy, który warto obejrzeć.'}`
   }
 
@@ -1053,7 +1072,10 @@ Rozpocznij od: "🎬 **CO CZYNI TEN FILM WYJĄTKOWYM**"`
     return data.choices[0]?.message?.content || `"${movie.title}" to klasyczny film oscarowy z ${movie.year} roku, który warto obejrzeć.`
 
   } catch (error) {
-    console.error('Error generating brief:', error)
+    console.error(`❌ Error generating brief for "${movie.title}":`, error)
+    if (error.message && error.message.includes('API key')) {
+      console.error('🔑 This appears to be an OpenAI API key issue. Check your OPENAI_API_KEY in Supabase Secrets.')
+    }
     return `"${movie.title}" (${movie.year}) - ${movie.overview || 'Klasyczny film oscarowy, który warto obejrzeć.'}`
   }
 }
