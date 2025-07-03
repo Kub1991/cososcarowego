@@ -1,6 +1,6 @@
 # Oscar Cinema - Inteligentne rekomendacje Oscarowych klasyków
 
-Aplikacja do odkrywania filmów nominowanych i nagrodzonych Oscarami z inteligentnym systemem rekomendacji opartym na AI.
+Aplikacja do odkrywania filmów nominowanych i nagrodzonych Oscarami z inteligentnym systemem rekomendacji opartym na AI. Obejmuje filmy z lat 2000-2019 (ceremonie 2001-2020).
 
 ## 🎬 Funkcjonalności
 
@@ -9,6 +9,9 @@ Aplikacja do odkrywania filmów nominowanych i nagrodzonych Oscarami z inteligen
 - **Przeszukiwanie według dekad** - Eksploracja filmów według okresów
 - **Filtrowanie według nastroju** - Znajdź film dopasowany do Twojego stanu ducha
 - **AI briefy** - 5-minutowe streszczenia filmów generowane przez AI
+- **Śledzenie postępu** - Monitoruj swoją podróż przez historię Oscarów
+- **System osiągnięć** - Zdobywaj odznaki za ukończenie dekad i lat
+- **Profil użytkownika** - Zarządzaj swoimi listami i postępem
 
 ## 🛠 Technologie
 
@@ -19,11 +22,19 @@ Aplikacja do odkrywania filmów nominowanych i nagrodzonych Oscarami z inteligen
 
 ## 📊 Baza danych
 
-Aplikacja zawiera filmy nominowane w kategorii "Najlepszy Film" z lat 2000-2009 (55 filmów).
+Aplikacja zawiera filmy nominowane w kategorii "Najlepszy Film" z lat 2000-2019 (145 filmów).
 
 ### Struktura tabel:
 
 - `movies` - Informacje o filmach z TMDB + status oscarowy
+- `streaming_availability` - Dostępność filmów w serwisach streamingowych
+- `user_profiles` - Profile użytkowników
+- `user_watchlist` - Lista filmów do obejrzenia
+- `user_movie_watches` - Historia oglądanych filmów
+- `user_achievements` - Osiągnięcia użytkowników
+- `user_challenges` - Wyzwania dla użytkowników
+- `user_oscar_progress` - Postęp w oglądaniu filmów oscarowych
+- `smart_match_cache` - Cache dla rekomendacji AI
 
 ## 🚀 Uruchomienie
 
@@ -67,7 +78,7 @@ OPENAI_API_KEY=your_openai_api_key
 3. **Uruchomienie migracji bazy danych**:
 ```bash
 # Migracje zostaną automatycznie zastosowane w Supabase
-# Podstawowa lista 55 filmów oscarowych zostanie dodana automatycznie
+# Podstawowa lista 145 filmów oscarowych zostanie dodana automatycznie
 ```
 
 4. **Wzbogacenie danych filmów**:
@@ -91,8 +102,8 @@ npm run dev
 
 ```
 src/
-├── components/          # Komponenty React
-├── lib/                # Konfiguracja Supabase i typy
+├── components/         # Komponenty React
+├── lib/                # Konfiguracja Supabase, typy i funkcje pomocnicze
 └── ...
 
 supabase/
@@ -103,12 +114,18 @@ scripts/
 ├── enrich-movie-data.js     # Wzbogacenie filmów o dane TMDB
 ├── check-missing-movies.js  # Sprawdzenie brakujących filmów
 ├── populate-ai-tags.js      # Generowanie tagów AI dla filmów
-└── populate-oscar-movies.js # Legacy skrypt (teraz używa upsert)
+├── populate-oscar-movies.js # Legacy skrypt (teraz używa upsert)
+├── remove-duplicates.js     # Usuwanie duplikatów filmów
+├── get-vote-counts.js       # Sprawdzanie liczby głosów dla filmów
+└── cleanup-files.js         # Czyszczenie problematycznych plików
 ```
 
 ## 🔧 Edge Functions
 
 - `movie-recommendations` - Generuje rekomendacje i briefy za pomocą AI
+  - Obsługuje różne typy zapytań: quick-shot, brief, smart-match, progress-insight
+  - Wykorzystuje cache dla szybszych odpowiedzi
+  - Generuje spersonalizowane rekomendacje na podstawie preferencji użytkownika
 
 ## 📋 Skrypty NPM
 
@@ -117,13 +134,18 @@ scripts/
 - `npm run enrich-movies` - Wzbogać filmy o szczegóły z TMDB API
 - `npm run populate-ai-tags` - Wygeneruj tagi AI dla filmów (nastrój, tematyka)
 - `npm run populate-movies` - Legacy skrypt (używa teraz upsert)
+- `npm run remove-duplicates` - Usuń duplikaty filmów z bazy danych
+- `npm run get-vote-counts` - Sprawdź liczbę głosów dla filmów
+- `npm run cleanup-files` - Wyczyść problematyczne pliki
 
 ## 🎯 Przepływ danych
 
-1. **Migracja bazy** - Podstawowa lista 55 filmów oscarowych jest wstawiana automatycznie
+1. **Migracja bazy** - Podstawowa lista 145 filmów oscarowych jest wstawiana automatycznie
 2. **Wzbogacenie TMDB** - Skrypt `enrich-movies` dodaje plakaty, opisy, gatunki, oceny
 3. **Tagi AI** - Skrypt `populate-ai-tags` generuje tagi nastroju i tematyczne
 4. **AI Content** - Edge Functions generują rekomendacje i briefy na żądanie
+5. **Śledzenie postępu** - System automatycznie śledzi postęp użytkownika
+6. **Osiągnięcia** - Automatyczne przyznawanie osiągnięć za ukończone kategorie
 
 ## 🔐 Bezpieczeństwo API
 
@@ -165,10 +187,11 @@ Upewnij się, że wszystkie wymagane zmienne są skonfigurowane w pliku `.env`:
 
 ## 📝 Następne kroki
 
-1. Rozszerzenie bazy o więcej dekad (1930-2024)
-2. Implementacja systemu użytkowników i list filmowych
-3. Rozbudowa algorytmu rekomendacji
-4. Dodanie systemu ocen i recenzji
+1. Rozszerzenie bazy o więcej dekad (1930-2023)
+2. Dodanie informacji o dostępności streamingowej
+3. Rozbudowa systemu osiągnięć i wyzwań
+4. Implementacja funkcji społecznościowych
+5. Dodanie statystyk i analiz dla użytkowników
 
 ## 🤝 Wkład w projekt
 
