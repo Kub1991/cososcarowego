@@ -916,12 +916,12 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
           {/* Brief View - Identical to QuickShotScreen */}
           {currentStep === 'brief' && selectedMovieForBrief && (
             <div 
-              className="p-8 md:p-12 md:rounded-2xl md:border md:border-neutral-700"
+              className="p-0 md:p-12 md:rounded-2xl md:border md:border-neutral-700"
               style={{
-                background: '#0a0a0a',
+                background: 'transparent md:bg-[#0a0a0a]',
               }}
             >
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center justify-between mb-6 md:mb-8 px-6 md:px-0">
                 <button
                   onClick={() => setCurrentStep('results')}
                   className="text-neutral-400 hover:text-white transition-colors flex items-center gap-2 text-sm"
@@ -936,7 +936,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
                 </button>
               </div>
 
-              <div className="text-center mb-8">
+              <div className="text-center mb-6 md:mb-8 px-6 md:px-0">
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
                   📖 5-MINUTOWY BRIEF: "{selectedMovieForBrief.movie.title?.toUpperCase()}"
                 </h2>
@@ -951,7 +951,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
                   </div>
                 </div>
               ) : (
-                <div className="max-w-4xl mx-auto">
+                <div className="max-w-4xl mx-auto px-6 md:px-0">
                   {briefText ? (
                     <div className="space-y-6">
                       {parseBriefSections(briefText).map((section, index) => (
@@ -993,7 +993,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
                     </div>
                   )}
 
-                  <div className="text-center mt-8">
+                  <div className="text-center mt-8 px-6 md:px-0">
                     <button 
                       onClick={() => setCurrentStep('results')}
                       className="bg-[#DFBD69] text-black font-semibold py-3 px-8 rounded-lg hover:bg-[#E8C573] transition-colors flex items-center justify-center gap-2 mx-auto"
