@@ -894,11 +894,6 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
 
               {/* FIXED: Mobile-responsive footer buttons */}
               <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 md:gap-4 px-2">
-                <button className="bg-neutral-700 text-white font-semibold py-2 md:py-3 px-4 md:px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-sm md:text-base">
-                  <Target className="w-4 h-4 md:w-5 md:h-5" />
-                  Więcej rekomendacji
-                </button>
-                
                 <button 
                   onClick={onGoToJourney}
                   className="bg-neutral-700 text-white font-semibold py-2 md:py-3 px-4 md:px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-sm md:text-base"
