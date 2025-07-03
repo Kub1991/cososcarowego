@@ -402,7 +402,7 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center py-0 px-0 md:py-20 md:px-6">
+      <div className="flex-1 flex items-center justify-center py-20 px-6">
         <div className="w-full max-w-4xl mx-auto">
 
           {/* Mood Step */}
