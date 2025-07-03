@@ -864,26 +864,26 @@ const SmartMatchScreen: React.FC<SmartMatchScreenProps> = ({ onBack, isAuthentic
                         <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
                           <button 
                             onClick={() => handleAddToList(recommendation.movie.id)}
-                            className="flex-1 bg-neutral-700 text-white font-semibold py-2 md:py-3 px-4 md:px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-sm md:text-base"
+                            className="flex-1 bg-neutral-700 text-white font-semibold py-2 md:py-3 px-2 md:px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm"
                           >
                             <img src="/ulubione.png" alt="Dodaj do listy" className="w-4 h-4" />
-                            Do obejrzenia
+                            <span className="whitespace-nowrap">Do obejrzenia</span>
                           </button>
                           
                           <button 
                             onClick={() => handleWatched(recommendation.movie.id)}
-                            className="flex-1 bg-neutral-700 text-white font-semibold py-2 md:py-3 px-4 md:px-6 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-2 text-sm md:text-base"
+                            className="flex-1 bg-neutral-700 text-white font-semibold py-2 md:py-3 px-2 md:px-4 rounded-lg hover:bg-neutral-600 transition-colors flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm"
                           >
                             <Check className="w-4 h-4" />
-                            Obejrzałem
+                            <span className="whitespace-nowrap">Obejrzałem</span>
                           </button>
                           
                           <button 
                             onClick={() => handleBriefClick(recommendation)}
-                            className="flex-1 bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] font-semibold py-2 md:py-3 px-4 md:px-6 rounded-lg hover:from-[#DFBD69]/30 transition-all flex items-center justify-center gap-2 text-sm md:text-base"
+                            className="flex-1 bg-gradient-to-r from-[#DFBD69]/20 to-transparent border border-[#DFBD69]/30 text-[#DFBD69] font-semibold py-2 md:py-3 px-2 md:px-4 rounded-lg hover:from-[#DFBD69]/30 transition-all flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm"
                           >
                             <BookOpen className="w-4 h-4" />
-                            5-MIN BRIEF
+                            <span className="whitespace-nowrap">5-MIN BRIEF</span>
                           </button>
                         </div>
                       </div>
